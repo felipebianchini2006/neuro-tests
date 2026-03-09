@@ -262,3 +262,8 @@
  GET /p/a29fb1e37492b129db4bd15e51891ef6c42efeda 200 in 580ms (compile: 5ms, render: 575ms)
  POST /api/sessions/a29fb1e37492b129db4bd15e51891ef6c42efeda/start 200 in 4.6s (compile: 6ms, render: 4.6s)
  POST /api/sessions/a29fb1e37492b129db4bd15e51891ef6c42efeda/start 200 in 1288ms (compile: 5ms, render: 1283ms)
+✓ Compiled in 285ms
+ GET /admin 200 in 1887ms (compile: 1325ms, render: 562ms)
+ GET /admin 200 in 50ms (compile: 5ms, render: 45ms)
+✓ Compiled in 213ms
+ GET /p/a29fb1e37492b129db4bd15e51891ef6c42efeda 200 in 1267ms (compile: 276ms, render: 991ms)

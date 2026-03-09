@@ -34,8 +34,8 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 2,
     imageSrc: "/assets/cubes/1.jpg",
     target: [
-      ["diag-tl", "white"],
-      ["diag-tr", "white"],
+      ["diag-br", "diag-bl"],
+      ["red", "red"],
     ],
   },
   {
@@ -44,7 +44,7 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 2,
     imageSrc: "/assets/cubes/2.jpg",
     target: [
-      ["white", "diag-tl"],
+      ["white", "diag-bl"],
       ["diag-tr", "white"],
     ],
   },
@@ -54,8 +54,8 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 2,
     imageSrc: "/assets/cubes/3.jpg",
     target: [
-      ["diag-tl", "diag-tr"],
-      ["diag-tr", "white"],
+      ["diag-br", "red"],
+      ["red", "diag-tl"],
     ],
   },
   {
@@ -64,8 +64,8 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 2,
     imageSrc: "/assets/cubes/4.jpg",
     target: [
-      ["diag-tl", "white"],
-      ["white", "white"],
+      ["diag-tl", "diag-tr"],
+      ["diag-br", "diag-bl"],
     ],
   },
   {
@@ -74,9 +74,9 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 3,
     imageSrc: "/assets/cubes/5.jpg",
     target: [
-      ["diag-tl", "white", "diag-tl"],
+      ["diag-tl", "white", "diag-tr"],
       ["white", "red", "white"],
-      ["diag-tr", "white", "diag-tr"],
+      ["diag-bl", "white", "diag-br"],
     ],
   },
   {
@@ -85,9 +85,9 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 3,
     imageSrc: "/assets/cubes/6.jpg",
     target: [
-      ["diag-tr", "diag-tr", "diag-tl"],
-      ["diag-tr", "diag-tr", "diag-tr"],
-      ["diag-tl", "diag-tr", "diag-tl"],
+      ["diag-bl", "diag-tr", "diag-bl"],
+      ["diag-tr", "diag-bl", "diag-tr"],
+      ["diag-bl", "diag-tr", "diag-bl"],
     ],
   },
   {
@@ -96,9 +96,9 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 3,
     imageSrc: "/assets/cubes/7.jpg",
     target: [
-      ["diag-tl", "diag-tr", "diag-tl"],
-      ["diag-tl", "diag-tr", "diag-tl"],
-      ["diag-tr", "diag-tl", "diag-tr"],
+      ["diag-bl", "diag-br", "diag-tl"],
+      ["diag-tl", "diag-tr", "diag-tr"],
+      ["diag-br", "diag-bl", "diag-tr"],
     ],
   },
   {

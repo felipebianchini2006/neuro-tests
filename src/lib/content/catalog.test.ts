@@ -38,6 +38,42 @@ describe("content catalog", () => {
     expect(getCubeChallengeAt(8)?.gridSize).toBe(3);
   });
 
+  it("matches the visible cube patterns for the first seven challenge images", () => {
+    expect(contentCatalog.cubeChallenges.slice(0, 7).map((challenge) => challenge.target)).toEqual([
+      [
+        ["diag-br", "diag-bl"],
+        ["red", "red"],
+      ],
+      [
+        ["white", "diag-bl"],
+        ["diag-tr", "white"],
+      ],
+      [
+        ["diag-br", "red"],
+        ["red", "diag-tl"],
+      ],
+      [
+        ["diag-tl", "diag-tr"],
+        ["diag-br", "diag-bl"],
+      ],
+      [
+        ["diag-tl", "white", "diag-tr"],
+        ["white", "red", "white"],
+        ["diag-bl", "white", "diag-br"],
+      ],
+      [
+        ["diag-bl", "diag-tr", "diag-bl"],
+        ["diag-tr", "diag-bl", "diag-tr"],
+        ["diag-bl", "diag-tr", "diag-bl"],
+      ],
+      [
+        ["diag-bl", "diag-br", "diag-tl"],
+        ["diag-tl", "diag-tr", "diag-tr"],
+        ["diag-br", "diag-bl", "diag-tr"],
+      ],
+    ]);
+  });
+
   it("keeps the first CAP story limited to the three sortable frames", () => {
     expect(getSequenceStoryAt(0)?.frames.map((frame) => frame.label)).toEqual([
       "1.1 - CAP",
