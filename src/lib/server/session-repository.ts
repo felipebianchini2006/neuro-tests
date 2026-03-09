@@ -54,6 +54,7 @@ export type SessionRepository = {
     isCorrect: boolean;
   }): Promise<SessionSnapshot | null>;
   advanceSession(token: string): Promise<SessionSnapshot | null>;
+  completeSession(token: string): Promise<SessionSnapshot | null>;
 };
 
 type MemoryStore = {
@@ -208,6 +209,10 @@ const memoryRepository: SessionRepository = {
       return null;
     }
 
+    if (session.status === "completed") {
+      return mapSnapshot(session, memoryStore.items.get(session.id)?.values() ?? []);
+    }
+
     const timestamp = nowIso();
     const itemMap = memoryStore.items.get(session.id) ?? new Map();
     const existing = itemMap.get(itemIndex);
@@ -243,6 +248,10 @@ const memoryRepository: SessionRepository = {
     const session = memoryStore.sessions.get(input.token);
     if (!session) {
       return null;
+    }
+
+    if (session.status === "completed") {
+      return mapSnapshot(session, memoryStore.items.get(session.id)?.values() ?? []);
     }
 
     const itemMap = memoryStore.items.get(session.id) ?? new Map();
@@ -291,6 +300,11 @@ const memoryRepository: SessionRepository = {
     }
 
     const itemMap = memoryStore.items.get(session.id) ?? new Map();
+
+    if (session.status === "completed") {
+      return mapSnapshot(session, itemMap.values());
+    }
+
     const current = itemMap.get(session.currentItemIndex);
 
     if (!current?.isCorrect) {
@@ -309,6 +323,27 @@ const memoryRepository: SessionRepository = {
     }
 
     memoryStore.sessions.set(token, session);
+    return mapSnapshot(session, itemMap.values());
+  },
+
+  async completeSession(token) {
+    const session = memoryStore.sessions.get(token);
+    if (!session) {
+      return null;
+    }
+
+    const itemMap = memoryStore.items.get(session.id) ?? new Map();
+
+    if (session.status === "completed") {
+      return mapSnapshot(session, itemMap.values());
+    }
+
+    const timestamp = nowIso();
+    session.status = "completed";
+    session.completedAt = timestamp;
+    session.updatedAt = timestamp;
+    memoryStore.sessions.set(token, session);
+
     return mapSnapshot(session, itemMap.values());
   },
 };
@@ -407,6 +442,10 @@ const supabaseRepository: SessionRepository = {
       return null;
     }
 
+    if (snapshot.session.status === "completed") {
+      return snapshot;
+    }
+
     const timestamp = nowIso();
 
     if (snapshot.session.status === "pending") {
@@ -461,6 +500,10 @@ const supabaseRepository: SessionRepository = {
       return null;
     }
 
+    if (snapshot.session.status === "completed") {
+      return snapshot;
+    }
+
     const timestamp = nowIso();
     const existing = snapshot.items.find((item) => item.itemIndex === input.itemIndex);
     const startedAt = existing?.startedAt ?? timestamp;
@@ -511,6 +554,10 @@ const supabaseRepository: SessionRepository = {
       return null;
     }
 
+    if (snapshot.session.status === "completed") {
+      return snapshot;
+    }
+
     const current = snapshot.items.find(
       (item) => item.itemIndex === snapshot.session.currentItemIndex,
     );
@@ -529,6 +576,38 @@ const supabaseRepository: SessionRepository = {
         current_item_index: nextIndex,
         status: isCompleted ? "completed" : snapshot.session.status,
         completed_at: isCompleted ? timestamp : snapshot.session.completedAt,
+        updated_at: timestamp,
+      })
+      .eq("id", snapshot.session.id);
+
+    if (error) {
+      throw error;
+    }
+
+    return this.getSessionByToken(token);
+  },
+
+  async completeSession(token) {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return memoryRepository.completeSession(token);
+    }
+
+    const snapshot = await this.getSessionByToken(token);
+    if (!snapshot) {
+      return null;
+    }
+
+    if (snapshot.session.status === "completed") {
+      return snapshot;
+    }
+
+    const timestamp = nowIso();
+    const { error } = await supabase
+      .from("sessions")
+      .update({
+        status: "completed",
+        completed_at: timestamp,
         updated_at: timestamp,
       })
       .eq("id", snapshot.session.id);

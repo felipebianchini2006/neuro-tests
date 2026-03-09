@@ -19,7 +19,7 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               href="/admin"
-              className="inline-flex min-h-11 items-center rounded-full bg-[color:var(--ink)] px-5 text-sm font-semibold text-white"
+              className="inline-flex min-h-11 items-center rounded-full bg-[color:var(--admin-strong)] px-5 text-sm font-semibold text-white transition duration-200 hover:bg-[color:var(--admin-strong-hover)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[rgba(50,111,93,0.16)]"
             >
               Abrir painel interno
             </Link>

@@ -42,4 +42,45 @@ describe("session-repository", () => {
 
     vi.useRealTimers();
   });
+
+  it("marks a session as completed and prevents further mutations", async () => {
+    vi.useFakeTimers();
+    const repository = getSessionRepository();
+
+    vi.setSystemTime(new Date("2026-03-09T12:00:00.000Z"));
+    const created = await repository.createSession({
+      participantCode: "Paciente C",
+      testType: "sequence",
+    });
+
+    vi.setSystemTime(new Date("2026-03-09T12:00:05.000Z"));
+    const started = await repository.startItem(created.session.token, 0);
+    expect(started?.session.status).toBe("in_progress");
+
+    vi.setSystemTime(new Date("2026-03-09T12:00:10.000Z"));
+    const completed = await repository.completeSession(created.session.token);
+
+    expect(completed?.session.status).toBe("completed");
+    expect(completed?.session.completedAt).toBe("2026-03-09T12:00:10.000Z");
+
+    const answeredAfterCompletion = await repository.recordAnswer({
+      token: created.session.token,
+      itemIndex: 0,
+      answerPayload: ["ignored"],
+      isCorrect: true,
+    });
+    const restartedAfterCompletion = await repository.startItem(
+      created.session.token,
+      1,
+    );
+    const advancedAfterCompletion = await repository.advanceSession(
+      created.session.token,
+    );
+
+    expect(answeredAfterCompletion).toEqual(completed);
+    expect(restartedAfterCompletion).toEqual(completed);
+    expect(advancedAfterCompletion).toEqual(completed);
+
+    vi.useRealTimers();
+  });
 });
