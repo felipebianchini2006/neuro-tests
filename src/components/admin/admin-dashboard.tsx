@@ -1,0 +1,236 @@
+"use client";
+
+import { useMemo, useState } from "react";
+
+import { Copy, LogOut, MonitorPlay, UserRound } from "lucide-react";
+
+import type { TestType } from "@/lib/content/catalog";
+import type { SessionSnapshot } from "@/lib/server/session-repository";
+
+type CreatedSession = {
+  snapshot: SessionSnapshot;
+  participantUrl: string;
+  observerUrl: string;
+};
+
+type AdminDashboardProps = {
+  persistentStoreEnabled: boolean;
+};
+
+export function AdminDashboard({
+  persistentStoreEnabled,
+}: AdminDashboardProps) {
+  const [participantCode, setParticipantCode] = useState("");
+  const [testType, setTestType] = useState<TestType>("sequence");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [createdSession, setCreatedSession] = useState<CreatedSession | null>(null);
+
+  const modeLabel = useMemo(
+    () => (persistentStoreEnabled ? "Supabase" : "Memória local"),
+    [persistentStoreEnabled],
+  );
+
+  const createSession = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setBusy(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/admin/sessions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ participantCode, testType }),
+      });
+
+      const data = (await response.json()) as {
+        error?: string;
+        snapshot?: SessionSnapshot;
+      };
+
+      if (!response.ok || !data.snapshot) {
+        throw new Error(data.error ?? "Não foi possível criar a sessão.");
+      }
+
+      const origin = window.location.origin;
+      setCreatedSession({
+        snapshot: data.snapshot,
+        participantUrl: `${origin}/p/${data.snapshot.session.token}`,
+        observerUrl: `${origin}/o/${data.snapshot.session.token}`,
+      });
+      setParticipantCode("");
+    } catch (creationError) {
+      setError(
+        creationError instanceof Error
+          ? creationError.message
+          : "Não foi possível criar a sessão.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const copyText = async (value: string) => {
+    await navigator.clipboard.writeText(value);
+  };
+
+  return (
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+      <section className="rounded-[2rem] border border-[color:var(--line)] bg-[color:var(--surface)] p-6 shadow-[0_20px_40px_rgba(34,29,22,0.08)]">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm uppercase tracking-[0.25em] text-[color:var(--muted)]">
+              Nova aplicação
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold text-[color:var(--ink)]">
+              Gerar link de sessão
+            </h1>
+          </div>
+          <span className="rounded-full bg-[color:var(--surface-strong)] px-3 py-1 text-xs font-semibold text-[color:var(--ink-soft)]">
+            Armazenamento: {modeLabel}
+          </span>
+        </div>
+
+        <form className="mt-6 space-y-5" onSubmit={createSession}>
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-[color:var(--ink)]">
+              Identificador do avaliado
+            </label>
+            <div className="relative">
+              <UserRound className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
+              <input
+                value={participantCode}
+                onChange={(event) => setParticipantCode(event.target.value)}
+                placeholder="Ex.: Paciente 08-03 / R.B."
+                className="h-12 w-full rounded-2xl border border-[color:var(--line)] bg-[color:var(--paper)] pl-11 pr-4 text-sm text-[color:var(--ink)] outline-none transition focus:border-[color:var(--accent)]"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-[color:var(--ink)]">
+              Tipo de teste
+            </label>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setTestType("sequence")}
+                className={[
+                  "rounded-[1.4rem] border p-4 text-left transition",
+                  testType === "sequence"
+                    ? "border-[color:var(--accent)] bg-[color:var(--accent-soft)]"
+                    : "border-[color:var(--line)] bg-[color:var(--paper)]",
+                ].join(" ")}
+              >
+                <p className="text-sm font-semibold text-[color:var(--ink)]">
+                  Arranjo de Figuras
+                </p>
+                <p className="mt-2 text-sm leading-6 text-[color:var(--ink-soft)]">
+                  Histórias com imagens embaralhadas para ordenar.
+                </p>
+              </button>
+              <button
+                type="button"
+                onClick={() => setTestType("cubes")}
+                className={[
+                  "rounded-[1.4rem] border p-4 text-left transition",
+                  testType === "cubes"
+                    ? "border-[color:var(--accent)] bg-[color:var(--accent-soft)]"
+                    : "border-[color:var(--line)] bg-[color:var(--paper)]",
+                ].join(" ")}
+              >
+                <p className="text-sm font-semibold text-[color:var(--ink)]">
+                  Cubos
+                </p>
+                <p className="mt-2 text-sm leading-6 text-[color:var(--ink-soft)]">
+                  Montagem de padrões bicolores em grades 2x2 e 3x3.
+                </p>
+              </button>
+            </div>
+          </div>
+
+          {error ? (
+            <p className="text-sm font-medium text-[color:var(--danger)]">{error}</p>
+          ) : null}
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="submit"
+              disabled={busy}
+              className="min-h-11 rounded-full bg-[color:var(--ink)] px-5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Criar sessão
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                await fetch("/api/admin/logout", { method: "POST" });
+                window.location.reload();
+              }}
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] px-5 text-sm font-semibold text-[color:var(--ink)]"
+            >
+              <LogOut className="h-4 w-4" />
+              Sair
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section className="rounded-[2rem] border border-[color:var(--line)] bg-[color:var(--surface)] p-6 shadow-[0_20px_40px_rgba(34,29,22,0.08)]">
+        <p className="text-sm uppercase tracking-[0.25em] text-[color:var(--muted)]">
+          Sessão criada
+        </p>
+        <h2 className="mt-2 text-2xl font-semibold text-[color:var(--ink)]">
+          {createdSession
+            ? createdSession.snapshot.session.participantCode
+            : "Nenhuma sessão gerada ainda"}
+        </h2>
+
+        {createdSession ? (
+          <div className="mt-6 space-y-4">
+            <div className="rounded-[1.5rem] border border-[color:var(--line)] bg-[color:var(--paper)] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                Link do avaliado
+              </p>
+              <p className="mt-2 break-all text-sm text-[color:var(--ink)]">
+                {createdSession.participantUrl}
+              </p>
+              <button
+                type="button"
+                onClick={() => copyText(createdSession.participantUrl)}
+                className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] px-4 text-sm font-semibold text-[color:var(--ink)]"
+              >
+                <Copy className="h-4 w-4" />
+                Copiar link
+              </button>
+            </div>
+
+            <div className="rounded-[1.5rem] border border-[color:var(--line)] bg-[color:var(--paper)] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                Link do observador
+              </p>
+              <p className="mt-2 break-all text-sm text-[color:var(--ink)]">
+                {createdSession.observerUrl}
+              </p>
+              <button
+                type="button"
+                onClick={() => copyText(createdSession.observerUrl)}
+                className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] px-4 text-sm font-semibold text-[color:var(--ink)]"
+              >
+                <MonitorPlay className="h-4 w-4" />
+                Copiar acompanhamento
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-6 rounded-[1.5rem] border border-dashed border-[color:var(--line)] bg-[color:var(--paper)] p-5 text-sm leading-6 text-[color:var(--ink-soft)]">
+            O painel cria uma sessão por link. Depois você compartilha o link do
+            avaliado e acompanha em tempo real pelo link do observador.
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
