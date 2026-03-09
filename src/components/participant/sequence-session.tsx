@@ -111,6 +111,7 @@ export function SequenceSession({
   onAdvance,
 }: SequenceSessionProps) {
   const [orderedIds, setOrderedIds] = useState(promptFrameIds);
+  const dndContextId = `sequence-dnd-${story.id}`;
 
   const frameMap = useMemo(
     () => new Map(story.frames.map((frame) => [frame.id, frame])),
@@ -154,6 +155,7 @@ export function SequenceSession({
       </header>
 
       <DndContext
+        id={dndContextId}
         sensors={sensors}
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}

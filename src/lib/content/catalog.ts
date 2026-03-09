@@ -19,6 +19,7 @@ export type CubeChallenge = {
   id: string;
   title: string;
   gridSize: 2 | 3;
+  imageSrc: string;
   target: CubeFace[][];
 };
 
@@ -28,90 +29,98 @@ const sequenceStories = generatedSequenceSources.map((entry) =>
 
 const cubeChallenges: CubeChallenge[] = [
   {
-    id: "cubes-01-diamond",
+    id: "cubes-01",
     title: "Cubos 1",
     gridSize: 2,
+    imageSrc: "/assets/cubes/1.jpg",
     target: [
-      ["diag-tl", "diag-tr"],
-      ["diag-bl", "diag-br"],
+      ["diag-tl", "white"],
+      ["diag-tr", "white"],
     ],
   },
   {
-    id: "cubes-02-checker",
+    id: "cubes-02",
     title: "Cubos 2",
     gridSize: 2,
+    imageSrc: "/assets/cubes/2.jpg",
     target: [
-      ["red", "white"],
-      ["white", "red"],
+      ["white", "diag-tl"],
+      ["diag-tr", "white"],
     ],
   },
   {
-    id: "cubes-03-pinwheel",
+    id: "cubes-03",
     title: "Cubos 3",
     gridSize: 2,
+    imageSrc: "/assets/cubes/3.jpg",
     target: [
-      ["diag-tr", "diag-br"],
-      ["diag-tl", "diag-bl"],
+      ["diag-tl", "diag-tr"],
+      ["diag-tr", "white"],
     ],
   },
   {
-    id: "cubes-04-frame",
+    id: "cubes-04",
     title: "Cubos 4",
-    gridSize: 3,
+    gridSize: 2,
+    imageSrc: "/assets/cubes/4.jpg",
     target: [
-      ["diag-tl", "red", "diag-tr"],
-      ["white", "white", "white"],
-      ["diag-bl", "red", "diag-br"],
+      ["diag-tl", "white"],
+      ["white", "white"],
     ],
   },
   {
-    id: "cubes-05-zigzag",
+    id: "cubes-05",
     title: "Cubos 5",
     gridSize: 3,
+    imageSrc: "/assets/cubes/5.jpg",
     target: [
-      ["diag-tr", "white", "diag-tl"],
-      ["red", "diag-br", "red"],
-      ["diag-bl", "white", "diag-br"],
+      ["diag-tl", "white", "diag-tl"],
+      ["white", "red", "white"],
+      ["diag-tr", "white", "diag-tr"],
     ],
   },
   {
-    id: "cubes-06-arrow",
+    id: "cubes-06",
     title: "Cubos 6",
     gridSize: 3,
+    imageSrc: "/assets/cubes/6.jpg",
     target: [
-      ["white", "diag-tl", "white"],
-      ["diag-bl", "red", "diag-tr"],
-      ["white", "diag-br", "white"],
+      ["diag-tr", "diag-tr", "diag-tl"],
+      ["diag-tr", "diag-tr", "diag-tr"],
+      ["diag-tl", "diag-tr", "diag-tl"],
     ],
   },
   {
-    id: "cubes-07-bar",
+    id: "cubes-07",
     title: "Cubos 7",
     gridSize: 3,
+    imageSrc: "/assets/cubes/7.jpg",
     target: [
-      ["white", "red", "white"],
       ["diag-tl", "diag-tr", "diag-tl"],
-      ["white", "red", "white"],
+      ["diag-tl", "diag-tr", "diag-tl"],
+      ["diag-tr", "diag-tl", "diag-tr"],
     ],
   },
   {
-    id: "cubes-08-cross",
+    id: "cubes-08",
     title: "Cubos 8",
     gridSize: 3,
+    imageSrc: "/assets/cubes/8.jpg",
     target: [
-      ["diag-tl", "white", "diag-tr"],
-      ["white", "red", "white"],
-      ["diag-bl", "white", "diag-br"],
+      ["white", "diag-tl", "diag-tr"],
+      ["white", "diag-tr", "diag-tl"],
+      ["white", "diag-tr", "white"],
     ],
   },
   {
-    id: "cubes-09-target",
+    id: "cubes-09",
     title: "Cubos 9",
     gridSize: 3,
+    imageSrc: "/assets/cubes/9.jpg",
     target: [
-      ["red", "diag-tl", "red"],
-      ["diag-tr", "white", "diag-bl"],
-      ["red", "diag-br", "red"],
+      ["diag-tl", "diag-tl", "white"],
+      ["diag-tl", "diag-tr", "white"],
+      ["diag-tr", "diag-tl", "white"],
     ],
   },
 ];
@@ -166,7 +175,7 @@ export function validateCubeAnswer(
 
 export function getItemTitle(testType: TestType, itemIndex: number) {
   if (testType === "sequence") {
-    return getSequenceStoryAt(itemIndex)?.title ?? `História ${itemIndex + 1}`;
+    return getSequenceStoryAt(itemIndex)?.title ?? `Historia ${itemIndex + 1}`;
   }
 
   return getCubeChallengeAt(itemIndex)?.title ?? `Cubos ${itemIndex + 1}`;

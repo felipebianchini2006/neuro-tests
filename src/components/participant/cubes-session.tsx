@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { RotateCw, Undo2 } from "lucide-react";
+import Image from "next/image";
 
 import { CubeFacePreview } from "@/components/shared/cube-face";
 import type { CubeChallenge } from "@/lib/content/catalog";
@@ -105,19 +106,15 @@ export function CubesSession({
               {challenge.gridSize}x{challenge.gridSize}
             </span>
           </div>
-          <div
-            className="grid gap-2"
-            style={{ gridTemplateColumns: `repeat(${challenge.gridSize}, 1fr)` }}
-          >
-            {challenge.target.flatMap((row, rowIndex) =>
-              row.map((face, columnIndex) => (
-                <CubeFacePreview
-                  key={`${rowIndex}-${columnIndex}`}
-                  face={face}
-                  className="aspect-square"
-                />
-              )),
-            )}
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] border border-[color:var(--line)] bg-white">
+            <Image
+              src={challenge.imageSrc}
+              alt={`${challenge.title} modelo`}
+              fill
+              className="object-contain"
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              priority
+            />
           </div>
         </article>
 

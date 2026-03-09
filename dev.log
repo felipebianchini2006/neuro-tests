@@ -1,0 +1,26 @@
+
+> neuro-tests@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.18.199:3000
+- Environments: .env.local
+
+✓ Starting...
+Creating turbopack project { dir: 'C:\\projetos\\desafios\\neuro-tests', testMode: true }
+✓ Ready in 2.3s
+○ Compiling /admin ...
+ GET /admin 200 in 8.7s (compile: 8.1s, render: 636ms)
+ GET /p/a82b35d13268cf16fe8ffeced72c8a5667747eed 200 in 11.4s (compile: 9.2s, render: 2.2s)
+ POST /api/sessions/a82b35d13268cf16fe8ffeced72c8a5667747eed/start 200 in 4.8s (compile: 2.9s, render: 1961ms)
+ GET /admin 200 in 400ms (compile: 9ms, render: 391ms)
+ POST /api/admin/login 200 in 346ms (compile: 330ms, render: 16ms)
+ GET /admin 200 in 306ms (compile: 9ms, render: 297ms)
+ POST /api/admin/sessions 200 in 687ms (compile: 292ms, render: 395ms)
+ GET /p/be42b2d2d7247f0b8228aeb07c20e3d25a8f6cb9 200 in 1350ms (compile: 18ms, render: 1332ms)
+ POST /api/sessions/be42b2d2d7247f0b8228aeb07c20e3d25a8f6cb9/start 200 in 1946ms (compile: 55ms, render: 1891ms)
+ POST /api/sessions/be42b2d2d7247f0b8228aeb07c20e3d25a8f6cb9/start 200 in 1421ms (compile: 15ms, render: 1406ms)
+ GET /admin 200 in 147ms (compile: 7ms, render: 139ms)
+ POST /api/admin/sessions 200 in 371ms (compile: 7ms, render: 364ms)
+ POST /api/admin/sessions 200 in 297ms (compile: 6ms, render: 291ms)
