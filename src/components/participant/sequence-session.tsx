@@ -84,7 +84,7 @@ function SortableFrameCard({
             src={src}
             alt={label}
             fill
-            className="object-cover"
+            className="object-contain"
             sizes="(max-width: 768px) 100vw, 33vw"
             priority={position < 2}
           />

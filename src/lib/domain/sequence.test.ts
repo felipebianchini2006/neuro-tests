@@ -9,10 +9,10 @@ import {
 describe("sequence domain", () => {
   it("ignores cover images that are not part of the sortable sequence", () => {
     const story = buildSequenceStory("1 - CAP", [
-      "/assets/sequence/1 - CAP/1 CAP.jpg",
-      "/assets/sequence/1 - CAP/1.1 - CAP.jpg",
-      "/assets/sequence/1 - CAP/1.2 - CAP.jpg",
-      "/assets/sequence/1 - CAP/1.3 - CAP.jpg",
+      "/assets/sequence/1%20-%20CAP/1%20CAP.jpg",
+      "/assets/sequence/1%20-%20CAP/1.1%20%20-%20CAP.jpg",
+      "/assets/sequence/1%20-%20CAP/1.2%20-%20CAP.jpg",
+      "/assets/sequence/1%20-%20CAP/1.3%20-%20CAP.jpg",
     ]);
 
     expect(story.frames.map((frame) => frame.label)).toEqual([
@@ -23,7 +23,7 @@ describe("sequence domain", () => {
     expect(story.correctOrder).toHaveLength(3);
   });
 
-  it("sorts image frames using natural order for a story", () => {
+  it("keeps the caller-provided frame order when building a story", () => {
     const story = buildSequenceStory("2 - CHASE", [
       "/assets/sequence/2 - CHASE/3 - CHASE.jpg",
       "/assets/sequence/2 - CHASE/1 - CHASE.jpg",
@@ -34,10 +34,28 @@ describe("sequence domain", () => {
     ]);
 
     expect(story.correctOrder).toEqual([
+      "2-chase-3-chase-jpg",
+      "2-chase-1-chase-jpg",
+      "2-chase-5-chase-jpg",
+      "2-chase-2-chase-jpg",
+      "2-chase-4-chase-jpg",
+    ]);
+  });
+
+  it("preserves the input frame order when a story already provides the validated sequence", () => {
+    const story = buildSequenceStory("2 - CHASE", [
+      "/assets/sequence/2 - CHASE/1 - CHASE.jpg",
+      "/assets/sequence/2 - CHASE/2 - CHASE.jpg",
+      "/assets/sequence/2 - CHASE/4 - CHASE.jpg",
+      "/assets/sequence/2 - CHASE/3 - CHASE.jpg",
+      "/assets/sequence/2 - CHASE/5 - CHASE.jpg",
+    ]);
+
+    expect(story.correctOrder).toEqual([
       "2-chase-1-chase-jpg",
       "2-chase-2-chase-jpg",
-      "2-chase-3-chase-jpg",
       "2-chase-4-chase-jpg",
+      "2-chase-3-chase-jpg",
       "2-chase-5-chase-jpg",
     ]);
   });

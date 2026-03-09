@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { SessionPlayer } from "@/components/participant/session-player";
+import { buildParticipantSessionState } from "@/lib/server/participant-session-state";
 import { getSessionRepository } from "@/lib/server/session-repository";
 
 export default async function ParticipantPage({
@@ -15,5 +16,5 @@ export default async function ParticipantPage({
     notFound();
   }
 
-  return <SessionPlayer initialSnapshot={snapshot} />;
+  return <SessionPlayer initialState={buildParticipantSessionState(snapshot)} />;
 }

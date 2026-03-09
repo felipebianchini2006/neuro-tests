@@ -46,4 +46,24 @@ describe("SequenceSession", () => {
       "sequence-dnd-1-cap",
     );
   });
+
+  it("renders sequence images without cropping them", () => {
+    const story = buildSequenceStory("1 - CAP", [
+      "/assets/sequence/1 - CAP/1 CAP.jpg",
+      "/assets/sequence/1 - CAP/1.1 - CAP.jpg",
+      "/assets/sequence/1 - CAP/1.2 - CAP.jpg",
+    ]);
+
+    render(
+      <SequenceSession
+        story={story}
+        promptFrameIds={story.correctOrder}
+        busy={false}
+        onSubmit={async () => {}}
+        onAdvance={async () => {}}
+      />,
+    );
+
+    expect(screen.getAllByRole("img")[0]).toHaveClass("object-contain");
+  });
 });

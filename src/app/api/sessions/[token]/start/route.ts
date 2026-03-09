@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { buildParticipantSessionState } from "@/lib/server/participant-session-state";
 import { getSessionRepository } from "@/lib/server/session-repository";
 
 export async function POST(
@@ -19,5 +20,5 @@ export async function POST(
     return NextResponse.json({ error: "Sessão não encontrada." }, { status: 404 });
   }
 
-  return NextResponse.json({ snapshot });
+  return NextResponse.json(buildParticipantSessionState(snapshot));
 }

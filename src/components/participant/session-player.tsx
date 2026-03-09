@@ -1,34 +1,30 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { CircleAlert } from "lucide-react";
 
-import {
-  getCubeChallengeAt,
-  getCubeTrayForSession,
-  getItemTitle,
-  getPromptSequenceFrames,
-  getSequenceStoryAt,
-} from "@/lib/content/catalog";
+import { getItemTitle } from "@/lib/content/catalog";
 import { postSessionAction } from "@/lib/client/api";
 import {
   broadcastSessionSnapshot,
   createSessionChannel,
 } from "@/lib/client/session-channel";
-import type { SessionSnapshot } from "@/lib/server/session-repository";
+import type { ParticipantSessionState } from "@/lib/server/participant-session-state";
 
 import { CubesSession } from "./cubes-session";
 import { SequenceSession } from "./sequence-session";
 
 type SessionPlayerProps = {
-  initialSnapshot: SessionSnapshot;
+  initialState: ParticipantSessionState;
 };
 
-export function SessionPlayer({ initialSnapshot }: SessionPlayerProps) {
-  const [snapshot, setSnapshot] = useState(initialSnapshot);
+export function SessionPlayer({ initialState }: SessionPlayerProps) {
+  const [playerState, setPlayerState] = useState(initialState);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const snapshot = playerState.snapshot;
 
   const currentIndex = Math.min(
     snapshot.session.currentItemIndex,
@@ -36,36 +32,10 @@ export function SessionPlayer({ initialSnapshot }: SessionPlayerProps) {
   );
   const currentRecord = snapshot.items.find((item) => item.itemIndex === currentIndex);
 
-  const sequenceStory = useMemo(
-    () =>
-      snapshot.session.testType === "sequence"
-        ? getSequenceStoryAt(currentIndex)
-        : null,
-    [currentIndex, snapshot.session.testType],
-  );
-  const cubeChallenge = useMemo(
-    () =>
-      snapshot.session.testType === "cubes"
-        ? getCubeChallengeAt(currentIndex)
-        : null,
-    [currentIndex, snapshot.session.testType],
-  );
-
-  const promptFrames = useMemo(() => {
-    if (!sequenceStory) {
-      return [];
-    }
-
-    return getPromptSequenceFrames(sequenceStory, snapshot.session.token);
-  }, [sequenceStory, snapshot.session.token]);
-
-  const cubeTray = useMemo(() => {
-    if (!cubeChallenge) {
-      return [];
-    }
-
-    return getCubeTrayForSession(cubeChallenge, snapshot.session.token);
-  }, [cubeChallenge, snapshot.session.token]);
+  const currentItem = playerState.currentItem;
+  const sequenceStory = currentItem?.kind === "sequence" ? currentItem.story : null;
+  const cubeChallenge =
+    currentItem?.kind === "cubes" ? currentItem.challenge : null;
 
   useEffect(() => {
     const channel = createSessionChannel(snapshot.session.token);
@@ -86,11 +56,11 @@ export function SessionPlayer({ initialSnapshot }: SessionPlayerProps) {
     }
 
     const channel = createSessionChannel(snapshot.session.token);
-    void postSessionAction<{ snapshot: SessionSnapshot }>(
+    void postSessionAction<ParticipantSessionState>(
       `/api/sessions/${snapshot.session.token}/start`,
       { itemIndex: currentIndex },
     ).then(async (response) => {
-      setSnapshot(response.snapshot);
+      setPlayerState(response);
       await broadcastSessionSnapshot(channel, response.snapshot);
     });
   }, [currentIndex, snapshot.session.status, snapshot.session.token]);
@@ -100,15 +70,14 @@ export function SessionPlayer({ initialSnapshot }: SessionPlayerProps) {
     setError(null);
 
     try {
-      const response = await postSessionAction<{
-        snapshot: SessionSnapshot;
-        isCorrect: boolean;
-      }>(`/api/sessions/${snapshot.session.token}/answer`, {
+      const response = await postSessionAction<
+        ParticipantSessionState & { isCorrect: boolean }
+      >(`/api/sessions/${snapshot.session.token}/answer`, {
         itemIndex: currentIndex,
         answerPayload,
       });
 
-      setSnapshot(response.snapshot);
+      setPlayerState(response);
       await broadcastSessionSnapshot(
         createSessionChannel(snapshot.session.token),
         response.snapshot,
@@ -129,10 +98,10 @@ export function SessionPlayer({ initialSnapshot }: SessionPlayerProps) {
     setError(null);
 
     try {
-      const response = await postSessionAction<{ snapshot: SessionSnapshot }>(
+      const response = await postSessionAction<ParticipantSessionState>(
         `/api/sessions/${snapshot.session.token}/advance`,
       );
-      setSnapshot(response.snapshot);
+      setPlayerState(response);
       await broadcastSessionSnapshot(
         createSessionChannel(snapshot.session.token),
         response.snapshot,
@@ -227,7 +196,9 @@ export function SessionPlayer({ initialSnapshot }: SessionPlayerProps) {
         <SequenceSession
           key={`${snapshot.session.token}:${sequenceStory.id}`}
           story={sequenceStory}
-          promptFrameIds={promptFrames.map((frame) => frame.id)}
+          promptFrameIds={
+            currentItem?.kind === "sequence" ? currentItem.promptFrameIds : []
+          }
           currentRecord={currentRecord}
           busy={busy}
           onSubmit={submit}
@@ -239,7 +210,9 @@ export function SessionPlayer({ initialSnapshot }: SessionPlayerProps) {
         <CubesSession
           key={`${snapshot.session.token}:${cubeChallenge.id}`}
           challenge={cubeChallenge}
-          initialTray={cubeTray}
+          initialTray={
+            currentItem?.kind === "cubes" ? currentItem.initialTray : []
+          }
           currentRecord={currentRecord}
           busy={busy}
           onSubmit={submit}

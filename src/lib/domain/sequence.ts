@@ -9,11 +9,6 @@ export type SequenceStory = {
   correctOrder: string[];
 };
 
-const naturalCollator = new Intl.Collator("pt-BR", {
-  numeric: true,
-  sensitivity: "base",
-});
-
 function slugify(value: string) {
   return value
     .normalize("NFD")
@@ -25,7 +20,13 @@ function slugify(value: string) {
 
 function getFileName(src: string) {
   const segments = src.split("/");
-  return segments.at(-1) ?? src;
+  const fileName = segments.at(-1) ?? src;
+
+  try {
+    return decodeURIComponent(fileName).replace(/\s+/g, " ").trim();
+  } catch {
+    return fileName.replace(/\s+/g, " ").trim();
+  }
 }
 
 function getFileLabel(src: string) {
@@ -57,11 +58,7 @@ export function buildSequenceStory(
   const sources =
     filteredFrameSources.length > 0 ? filteredFrameSources : [...frameSources];
 
-  const sorted = sources.sort((left, right) =>
-    naturalCollator.compare(getFileName(left), getFileName(right)),
-  );
-
-  const frames = sorted.map((src) => {
+  const frames = sources.map((src) => {
     const fileName = getFileName(src);
     return {
       id: slugify(`${title}-${fileName}`),
