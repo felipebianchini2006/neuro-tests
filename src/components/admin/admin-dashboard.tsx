@@ -1,30 +1,55 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Copy, LogOut, MonitorPlay, UserRound } from "lucide-react";
 
 import type { TestType } from "@/lib/content/catalog";
-import type { SessionSnapshot } from "@/lib/server/session-repository";
-
-type CreatedSession = {
-  snapshot: SessionSnapshot;
-  participantUrl: string;
-  observerUrl: string;
-};
+import type {
+  SessionRecord,
+  SessionSnapshot,
+} from "@/lib/server/session-repository";
 
 type AdminDashboardProps = {
+  initialSessions: SessionRecord[];
   persistentStoreEnabled: boolean;
 };
 
+function buildSessionUrl(origin: string, kind: "p" | "o", token: string) {
+  const basePath = `/${kind}/${token}`;
+  return origin ? `${origin}${basePath}` : basePath;
+}
+
+function getTestTypeLabel(testType: TestType) {
+  return testType === "sequence" ? "Arranjo de Figuras" : "Cubos";
+}
+
+function getSessionStatusLabel(status: SessionRecord["status"]) {
+  if (status === "completed") {
+    return "Concluída";
+  }
+
+  if (status === "in_progress") {
+    return "Em andamento";
+  }
+
+  return "Pendente";
+}
+
 export function AdminDashboard({
+  initialSessions,
   persistentStoreEnabled,
 }: AdminDashboardProps) {
   const [participantCode, setParticipantCode] = useState("");
   const [testType, setTestType] = useState<TestType>("sequence");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [createdSession, setCreatedSession] = useState<CreatedSession | null>(null);
+  const [origin, setOrigin] = useState("");
+  const [sessions, setSessions] = useState<SessionRecord[]>(initialSessions);
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
 
   const modeLabel = useMemo(
     () => (persistentStoreEnabled ? "Supabase" : "Memória local"),
@@ -54,12 +79,10 @@ export function AdminDashboard({
         throw new Error(data.error ?? "Não foi possível criar a sessão.");
       }
 
-      const origin = window.location.origin;
-      setCreatedSession({
-        snapshot: data.snapshot,
-        participantUrl: `${origin}/p/${data.snapshot.session.token}`,
-        observerUrl: `${origin}/o/${data.snapshot.session.token}`,
-      });
+      setSessions((current) => [
+        data.snapshot.session,
+        ...current.filter((session) => session.token !== data.snapshot!.session.token),
+      ]);
       setParticipantCode("");
     } catch (creationError) {
       setError(
@@ -95,12 +118,16 @@ export function AdminDashboard({
 
         <form className="mt-6 space-y-5" onSubmit={createSession}>
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[color:var(--ink)]">
+            <label
+              htmlFor="participant-code"
+              className="text-sm font-medium text-[color:var(--ink)]"
+            >
               Identificador do avaliado
             </label>
             <div className="relative">
               <UserRound className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
               <input
+                id="participant-code"
                 value={participantCode}
                 onChange={(event) => setParticipantCode(event.target.value)}
                 placeholder="Ex.: Paciente 08-03 / R.B."
@@ -110,9 +137,7 @@ export function AdminDashboard({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-[color:var(--ink)]">
-              Tipo de teste
-            </label>
+            <p className="text-sm font-medium text-[color:var(--ink)]">Tipo de teste</p>
             <div className="grid gap-3 sm:grid-cols-2">
               <button
                 type="button"
@@ -141,9 +166,7 @@ export function AdminDashboard({
                     : "border-[color:var(--line)] bg-[color:var(--paper)]",
                 ].join(" ")}
               >
-                <p className="text-sm font-semibold text-[color:var(--ink)]">
-                  Cubos
-                </p>
+                <p className="text-sm font-semibold text-[color:var(--ink)]">Cubos</p>
                 <p className="mt-2 text-sm leading-6 text-[color:var(--ink-soft)]">
                   Montagem de padrões bicolores em grades 2x2 e 3x3.
                 </p>
@@ -180,54 +203,87 @@ export function AdminDashboard({
 
       <section className="rounded-[2rem] border border-[color:var(--line)] bg-[color:var(--surface)] p-6 shadow-[0_20px_40px_rgba(34,29,22,0.08)]">
         <p className="text-sm uppercase tracking-[0.25em] text-[color:var(--muted)]">
-          Sessão criada
+          Sessões criadas
         </p>
         <h2 className="mt-2 text-2xl font-semibold text-[color:var(--ink)]">
-          {createdSession
-            ? createdSession.snapshot.session.participantCode
+          {sessions.length > 0
+            ? `${sessions.length} ${sessions.length === 1 ? "sessão no painel" : "sessões no painel"}`
             : "Nenhuma sessão gerada ainda"}
         </h2>
 
-        {createdSession ? (
+        {sessions.length > 0 ? (
           <div className="mt-6 space-y-4">
-            <div className="rounded-[1.5rem] border border-[color:var(--line)] bg-[color:var(--paper)] p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--muted)]">
-                Link do avaliado
-              </p>
-              <p className="mt-2 break-all text-sm text-[color:var(--ink)]">
-                {createdSession.participantUrl}
-              </p>
-              <button
-                type="button"
-                onClick={() => copyText(createdSession.participantUrl)}
-                className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] px-4 text-sm font-semibold text-[color:var(--ink)]"
-              >
-                <Copy className="h-4 w-4" />
-                Copiar link
-              </button>
-            </div>
+            {sessions.map((session) => {
+              const participantUrl = buildSessionUrl(origin, "p", session.token);
+              const observerUrl = buildSessionUrl(origin, "o", session.token);
 
-            <div className="rounded-[1.5rem] border border-[color:var(--line)] bg-[color:var(--paper)] p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--muted)]">
-                Link do observador
-              </p>
-              <p className="mt-2 break-all text-sm text-[color:var(--ink)]">
-                {createdSession.observerUrl}
-              </p>
-              <button
-                type="button"
-                onClick={() => copyText(createdSession.observerUrl)}
-                className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] px-4 text-sm font-semibold text-[color:var(--ink)]"
-              >
-                <MonitorPlay className="h-4 w-4" />
-                Copiar acompanhamento
-              </button>
-            </div>
+              return (
+                <article
+                  key={session.token}
+                  className="rounded-[1.5rem] border border-[color:var(--line)] bg-[color:var(--paper)] p-4"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                        {getTestTypeLabel(session.testType)}
+                      </p>
+                      <h3 className="mt-2 text-lg font-semibold text-[color:var(--ink)]">
+                        {session.participantCode}
+                      </h3>
+                    </div>
+                    <span className="rounded-full bg-[color:var(--surface-strong)] px-3 py-1 text-xs font-semibold text-[color:var(--ink-soft)]">
+                      {getSessionStatusLabel(session.status)}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 space-y-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                        Link do avaliado
+                      </p>
+                      <p className="mt-2 break-all text-sm text-[color:var(--ink)]">
+                        {participantUrl}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          copyText(buildSessionUrl(window.location.origin, "p", session.token))
+                        }
+                        className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] px-4 text-sm font-semibold text-[color:var(--ink)]"
+                      >
+                        <Copy className="h-4 w-4" />
+                        Copiar link
+                      </button>
+                    </div>
+
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                        Link do observador
+                      </p>
+                      <p className="mt-2 break-all text-sm text-[color:var(--ink)]">
+                        {observerUrl}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          copyText(buildSessionUrl(window.location.origin, "o", session.token))
+                        }
+                        className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] px-4 text-sm font-semibold text-[color:var(--ink)]"
+                      >
+                        <MonitorPlay className="h-4 w-4" />
+                        Copiar acompanhamento
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         ) : (
           <div className="mt-6 rounded-[1.5rem] border border-dashed border-[color:var(--line)] bg-[color:var(--paper)] p-5 text-sm leading-6 text-[color:var(--ink-soft)]">
-            O painel cria uma sessão por link. Depois você compartilha o link do
-            avaliado e acompanha em tempo real pelo link do observador.
+            O painel lista as sessões criadas no armazenamento atual. Depois você
+            compartilha o link do avaliado e acompanha em tempo real pelo link do
+            observador.
           </div>
         )}
       </section>

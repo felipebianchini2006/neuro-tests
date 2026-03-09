@@ -1,6 +1,7 @@
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
 import { AdminLoginForm } from "@/components/admin/admin-login-form";
 import { isAdminAuthenticated } from "@/lib/server/admin-auth";
+import { getSessionRepository } from "@/lib/server/session-repository";
 
 export default async function AdminPage() {
   const isAuthenticated = await isAdminAuthenticated();
@@ -9,6 +10,10 @@ export default async function AdminPage() {
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
       process.env.SUPABASE_SERVICE_ROLE_KEY,
   );
+  const initialSessions =
+    hasAdminPassword && isAuthenticated
+      ? await getSessionRepository().listSessions()
+      : [];
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center gap-8 px-4 py-10 sm:px-6 lg:px-8">
@@ -38,7 +43,10 @@ export default async function AdminPage() {
       ) : null}
 
       {hasAdminPassword && isAuthenticated ? (
-        <AdminDashboard persistentStoreEnabled={persistentStoreEnabled} />
+        <AdminDashboard
+          initialSessions={initialSessions}
+          persistentStoreEnabled={persistentStoreEnabled}
+        />
       ) : null}
     </main>
   );

@@ -44,6 +44,7 @@ export type CreateSessionInput = {
 
 export type SessionRepository = {
   createSession(input: CreateSessionInput): Promise<SessionSnapshot>;
+  listSessions(): Promise<SessionRecord[]>;
   getSessionByToken(token: string): Promise<SessionSnapshot | null>;
   startItem(token: string, itemIndex: number): Promise<SessionSnapshot | null>;
   recordAnswer(input: {
@@ -97,6 +98,26 @@ function mapSnapshot(
     session,
     items: [...items].sort((left, right) => left.itemIndex - right.itemIndex),
   };
+}
+
+function sortSessionsByCreatedAtDesc(sessions: Iterable<SessionRecord>) {
+  return [...sessions].sort((left, right) => {
+    const createdDifference =
+      new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime();
+
+    if (createdDifference !== 0) {
+      return createdDifference;
+    }
+
+    const updatedDifference =
+      new Date(right.updatedAt).getTime() - new Date(left.updatedAt).getTime();
+
+    if (updatedDifference !== 0) {
+      return updatedDifference;
+    }
+
+    return right.token.localeCompare(left.token);
+  });
 }
 
 function getSupabaseClient() {
@@ -166,6 +187,10 @@ const memoryRepository: SessionRepository = {
     memoryStore.items.set(session.id, new Map());
 
     return mapSnapshot(session, []);
+  },
+
+  async listSessions() {
+    return sortSessionsByCreatedAtDesc(memoryStore.sessions.values());
   },
 
   async getSessionByToken(token) {
@@ -318,6 +343,25 @@ const supabaseRepository: SessionRepository = {
       session: mapSessionRow(data),
       items: [],
     };
+  },
+
+  async listSessions() {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return memoryRepository.listSessions();
+    }
+
+    const { data, error } = await supabase
+      .from("sessions")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .order("updated_at", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return (data ?? []).map((row) => mapSessionRow(row));
   },
 
   async getSessionByToken(token) {

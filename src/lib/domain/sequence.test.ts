@@ -7,6 +7,22 @@ import {
 } from "@/lib/domain/sequence";
 
 describe("sequence domain", () => {
+  it("ignores cover images that are not part of the sortable sequence", () => {
+    const story = buildSequenceStory("1 - CAP", [
+      "/assets/sequence/1 - CAP/1 CAP.jpg",
+      "/assets/sequence/1 - CAP/1.1 - CAP.jpg",
+      "/assets/sequence/1 - CAP/1.2 - CAP.jpg",
+      "/assets/sequence/1 - CAP/1.3 - CAP.jpg",
+    ]);
+
+    expect(story.frames.map((frame) => frame.label)).toEqual([
+      "1.1 - CAP",
+      "1.2 - CAP",
+      "1.3 - CAP",
+    ]);
+    expect(story.correctOrder).toHaveLength(3);
+  });
+
   it("sorts image frames using natural order for a story", () => {
     const story = buildSequenceStory("2 - CHASE", [
       "/assets/sequence/2 - CHASE/3 - CHASE.jpg",
@@ -14,6 +30,7 @@ describe("sequence domain", () => {
       "/assets/sequence/2 - CHASE/5 - CHASE.jpg",
       "/assets/sequence/2 - CHASE/2 - CHASE.jpg",
       "/assets/sequence/2 - CHASE/4 - CHASE.jpg",
+      "/assets/sequence/2 - CHASE/CHASE.jpg",
     ]);
 
     expect(story.correctOrder).toEqual([

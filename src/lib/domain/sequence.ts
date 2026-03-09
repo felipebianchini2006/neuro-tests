@@ -28,6 +28,14 @@ function getFileName(src: string) {
   return segments.at(-1) ?? src;
 }
 
+function getFileLabel(src: string) {
+  return getFileName(src).replace(/\.[^.]+$/, "");
+}
+
+function isSortableSequenceFrame(label: string) {
+  return /^\d+(?:\.\d+)?(?:[A-Za-z])?(?:\s*-\s*.*)?$/.test(label.trim());
+}
+
 function stableHash(value: string) {
   let hash = 2166136261;
 
@@ -43,7 +51,13 @@ export function buildSequenceStory(
   title: string,
   frameSources: string[],
 ): SequenceStory {
-  const sorted = [...frameSources].sort((left, right) =>
+  const filteredFrameSources = frameSources.filter((src) =>
+    isSortableSequenceFrame(getFileLabel(src)),
+  );
+  const sources =
+    filteredFrameSources.length > 0 ? filteredFrameSources : [...frameSources];
+
+  const sorted = sources.sort((left, right) =>
     naturalCollator.compare(getFileName(left), getFileName(right)),
   );
 
