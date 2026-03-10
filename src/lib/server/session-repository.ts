@@ -45,6 +45,7 @@ export type CreateSessionInput = {
 export type SessionRepository = {
   createSession(input: CreateSessionInput): Promise<SessionSnapshot>;
   listSessions(): Promise<SessionRecord[]>;
+  deleteCompletedSessions(): Promise<number>;
   getSessionByToken(token: string): Promise<SessionSnapshot | null>;
   startItem(token: string, itemIndex: number): Promise<SessionSnapshot | null>;
   recordAnswer(input: {
@@ -192,6 +193,19 @@ const memoryRepository: SessionRepository = {
 
   async listSessions() {
     return sortSessionsByCreatedAtDesc(memoryStore.sessions.values());
+  },
+
+  async deleteCompletedSessions() {
+    const completedSessions = [...memoryStore.sessions.values()].filter(
+      (session) => session.status === "completed",
+    );
+
+    for (const session of completedSessions) {
+      memoryStore.sessions.delete(session.token);
+      memoryStore.items.delete(session.id);
+    }
+
+    return completedSessions.length;
   },
 
   async getSessionByToken(token) {
@@ -397,6 +411,38 @@ const supabaseRepository: SessionRepository = {
     }
 
     return (data ?? []).map((row) => mapSessionRow(row));
+  },
+
+  async deleteCompletedSessions() {
+    const supabase = getSupabaseClient();
+    if (!supabase) {
+      return memoryRepository.deleteCompletedSessions();
+    }
+
+    const { data, error } = await supabase
+      .from("sessions")
+      .select("id")
+      .eq("status", "completed");
+
+    if (error) {
+      throw error;
+    }
+
+    const deletedCount = data?.length ?? 0;
+    if (!deletedCount) {
+      return 0;
+    }
+
+    const { error: deleteError } = await supabase
+      .from("sessions")
+      .delete()
+      .eq("status", "completed");
+
+    if (deleteError) {
+      throw deleteError;
+    }
+
+    return deletedCount;
   },
 
   async getSessionByToken(token) {

@@ -83,4 +83,40 @@ describe("session-repository", () => {
 
     vi.useRealTimers();
   });
+
+  it("deletes all completed sessions without removing open ones", async () => {
+    vi.useFakeTimers();
+    const repository = getSessionRepository();
+
+    vi.setSystemTime(new Date("2026-03-09T12:00:00.000Z"));
+    const openSession = await repository.createSession({
+      participantCode: "Paciente Aberto",
+      testType: "sequence",
+    });
+
+    vi.setSystemTime(new Date("2026-03-09T12:00:01.000Z"));
+    const firstCompleted = await repository.createSession({
+      participantCode: "Paciente Encerrado 1",
+      testType: "sequence",
+    });
+
+    vi.setSystemTime(new Date("2026-03-09T12:00:02.000Z"));
+    const secondCompleted = await repository.createSession({
+      participantCode: "Paciente Encerrado 2",
+      testType: "cubes",
+    });
+
+    await repository.completeSession(firstCompleted.session.token);
+    await repository.completeSession(secondCompleted.session.token);
+
+    const deletedCount = await repository.deleteCompletedSessions();
+    const sessions = await repository.listSessions();
+
+    expect(deletedCount).toBe(2);
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0]?.token).toBe(openSession.session.token);
+    expect(sessions[0]?.status).toBe("pending");
+
+    vi.useRealTimers();
+  });
 });

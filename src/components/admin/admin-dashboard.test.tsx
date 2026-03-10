@@ -152,6 +152,62 @@ describe("AdminDashboard", () => {
     expect(screen.queryByText("Paciente A")).not.toBeInTheDocument();
   });
 
+  it("deletes all completed sessions at once from the history tab", async () => {
+    const fetchMock = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+      const url = String(input);
+
+      if (url.endsWith("/api/admin/sessions/completed")) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            deletedCount: 1,
+          }),
+        });
+      }
+
+      throw new Error(`Unexpected fetch call: ${url}`);
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(
+      <AdminDashboard
+        persistentStoreEnabled={false}
+        initialSessions={[
+          buildSessionRecord("Paciente Aberto", "token-open"),
+          {
+            ...buildSessionRecord("Paciente Encerrado", "token-completed"),
+            status: "completed",
+            completedAt: "2026-03-09T12:10:00.000Z",
+            updatedAt: "2026-03-09T12:10:00.000Z",
+          },
+        ]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("tab", { name: /Sessoes encerradas/i }));
+    expect(
+      screen.getByRole("heading", { name: "Paciente Encerrado" }),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: /Excluir encerradas/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: /Sessoes em aberto 1/i })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+
+    expect(screen.getByRole("heading", { name: "Paciente Aberto" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Paciente Encerrado" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("tab", { name: /Sessoes encerradas 0/i }),
+    ).toBeInTheDocument();
+  });
+
   it("keeps the compact creation area labels visible", () => {
     render(
       <AdminDashboard
@@ -165,5 +221,25 @@ describe("AdminDashboard", () => {
     expect(screen.getByText("Identificador do avaliado")).toBeInTheDocument();
     expect(screen.getByText("Tipo de teste")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Criar sess/i })).toBeInTheDocument();
+  });
+
+  it("wraps long session links instead of letting them overflow the card", () => {
+    render(
+      <AdminDashboard
+        persistentStoreEnabled
+        initialSessions={[
+          buildSessionRecord(
+            "Paciente Link Longo",
+            "dc2f7a99806f2d3d867d655c6d5ba0a4c188092123456789abcdef",
+          ),
+        ]}
+      />,
+    );
+
+    const participantLink = screen.getByText(
+      /\/p\/dc2f7a99806f2d3d867d655c6d5ba0a4c188092123456789abcdef/i,
+    );
+
+    expect(participantLink).toHaveClass("break-all");
   });
 });

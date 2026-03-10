@@ -22,6 +22,7 @@ import {
   Plus,
   Search,
   Target,
+  Trash2,
   UserRound,
   XCircle,
 } from "lucide-react";
@@ -180,7 +181,7 @@ function LinkCard({
         </div>
       </div>
 
-      <p className="mt-4 rounded-[0.9rem] border border-[color:var(--line)] bg-white/72 px-3 py-3 font-mono text-xs leading-6 text-[color:var(--ink-soft)]">
+      <p className="mt-4 break-all rounded-[0.9rem] border border-[color:var(--line)] bg-white/72 px-3 py-3 font-mono text-xs leading-6 text-[color:var(--ink-soft)]">
         {href}
       </p>
 
@@ -215,6 +216,7 @@ export function AdminDashboard({
   const [testType, setTestType] = useState<TestType>("sequence");
   const [createPending, setCreatePending] = useState(false);
   const [closingToken, setClosingToken] = useState<string | null>(null);
+  const [clearCompletedPending, setClearCompletedPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [origin, setOrigin] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -254,11 +256,38 @@ export function AdminDashboard({
   }, [completedSessions, deferredSearchTerm, openSessions, selectedTab]);
 
   useEffect(() => {
-    if (!visibleSessions.length) return;
-    if (!visibleSessions.some((session) => session.token === selectedSessionToken)) {
-      setSelectedSessionToken(visibleSessions[0]?.token ?? null);
+    if (visibleSessions.length > 0) {
+      if (!visibleSessions.some((session) => session.token === selectedSessionToken)) {
+        setSelectedSessionToken(visibleSessions[0]?.token ?? null);
+      }
+      return;
     }
-  }, [selectedSessionToken, visibleSessions]);
+
+    const sessionsInSelectedTab =
+      selectedTab === "completed" ? completedSessions : openSessions;
+
+    if (!sessionsInSelectedTab.length) {
+      const fallbackTab = openSessions.length > 0 ? "open" : "completed";
+      if (fallbackTab !== selectedTab) {
+        startTransition(() => {
+          setSelectedTab(fallbackTab);
+          setSelectedSessionToken(getInitialSelectedSessionToken(sessions, fallbackTab));
+        });
+        return;
+      }
+    }
+
+    if (selectedSessionToken !== null) {
+      setSelectedSessionToken(null);
+    }
+  }, [
+    completedSessions,
+    openSessions,
+    selectedSessionToken,
+    selectedTab,
+    sessions,
+    visibleSessions,
+  ]);
 
   const selectedSession =
     visibleSessions.find((session) => session.token === selectedSessionToken) ?? null;
@@ -329,6 +358,34 @@ export function AdminDashboard({
       );
     } finally {
       setClosingToken(null);
+    }
+  };
+
+  const deleteCompletedSessions = async () => {
+    setClearCompletedPending(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/admin/sessions/completed", {
+        method: "DELETE",
+      });
+      const data = (await response.json()) as { deletedCount?: number; error?: string };
+      if (!response.ok || typeof data.deletedCount !== "number") {
+        throw new Error(data.error ?? "Nao foi possivel limpar o historico.");
+      }
+
+      setSessions((current) =>
+        current.filter((session) => getSessionBucket(session) !== "completed"),
+      );
+      setSearchTerm("");
+    } catch (clearError) {
+      setError(
+        clearError instanceof Error
+          ? clearError.message
+          : "Nao foi possivel limpar o historico.",
+      );
+    } finally {
+      setClearCompletedPending(false);
     }
   };
 
@@ -516,6 +573,18 @@ export function AdminDashboard({
                   className={`${inputClass} pl-10`}
                 />
               </label>
+
+              {selectedTab === "completed" ? (
+                <button
+                  type="button"
+                  onClick={deleteCompletedSessions}
+                  disabled={clearCompletedPending || completedSessions.length === 0}
+                  className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[1rem] border border-[rgba(180,71,49,0.16)] bg-[rgba(255,245,240,0.9)] px-4 text-sm font-semibold text-[color:var(--danger)] transition duration-200 hover:bg-[rgba(255,240,232,0.96)] disabled:cursor-not-allowed disabled:border-[color:var(--admin-disabled-border)] disabled:bg-[color:var(--surface-strong)] disabled:text-[color:var(--admin-disabled-text)]"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  {clearCompletedPending ? "Excluindo..." : "Excluir encerradas"}
+                </button>
+              ) : null}
 
               <div role="tablist" aria-label="Navegacao das sessoes" className="mt-4 grid grid-cols-2 gap-2">
                 {[
