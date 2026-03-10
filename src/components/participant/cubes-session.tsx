@@ -47,6 +47,9 @@ export function CubesSession({
     () => new Map(pieces.map((piece) => [piece.id, piece])),
     [pieces],
   );
+  const selectedPiece = selectedPieceId ? pieceMap.get(selectedPieceId) ?? null : null;
+  const placedPieceIds = new Set(board.flat().filter((cell): cell is string => cell !== null));
+  const placedCount = placedPieceIds.size;
 
   const boardFaces = board.map((row) =>
     row.map((cell) => (cell ? pieceMap.get(cell)?.face ?? null : null)),
@@ -106,6 +109,7 @@ export function CubesSession({
               {challenge.gridSize}x{challenge.gridSize}
             </span>
           </div>
+
           <div className="space-y-4">
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
@@ -147,7 +151,7 @@ export function CubesSession({
         </article>
 
         <article className="rounded-[1.8rem] border border-[color:var(--line)] bg-[color:var(--surface)] p-5">
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm uppercase tracking-[0.25em] text-[color:var(--muted)]">
                 Resposta
@@ -166,18 +170,20 @@ export function CubesSession({
           </div>
 
           <div
-            className="grid gap-2"
+            className="grid gap-2 sm:gap-3"
             style={{ gridTemplateColumns: `repeat(${challenge.gridSize}, 1fr)` }}
           >
             {board.flatMap((row, rowIndex) =>
               row.map((cell, columnIndex) => {
                 const piece = cell ? pieceMap.get(cell) ?? null : null;
                 const isSelected = selectedPieceId === cell && cell !== null;
+                const canPlaceSelected = selectedPieceId !== null;
 
                 return (
                   <button
                     key={`${rowIndex}-${columnIndex}`}
                     type="button"
+                    aria-label={`Célula ${rowIndex + 1}-${columnIndex + 1}`}
                     onClick={() => {
                       if (selectedPieceId) {
                         placePiece(selectedPieceId, rowIndex, columnIndex);
@@ -194,13 +200,20 @@ export function CubesSession({
                       }
                     }}
                     className={[
-                      "relative aspect-square rounded-[1rem] border border-dashed p-1 transition",
+                      "relative aspect-square rounded-[1.1rem] border p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.28)] transition-all",
                       isSelected
-                        ? "border-[color:var(--accent)] bg-[color:var(--accent-soft)]"
-                        : "border-[color:var(--line-strong)] bg-[color:var(--surface-strong)]",
+                        ? "border-[color:var(--accent)] bg-[color:var(--accent-soft)] shadow-[0_0_0_3px_rgba(50,111,93,0.12)]"
+                        : canPlaceSelected
+                          ? "border-[color:var(--accent)]/45 bg-[color:var(--paper)]"
+                          : "border-[color:var(--line-strong)] border-dashed bg-[color:var(--surface-strong)]",
                     ].join(" ")}
                   >
                     <CubeFacePreview face={piece?.face ?? null} className="aspect-square" />
+                    {canPlaceSelected && !piece ? (
+                      <span className="pointer-events-none absolute inset-x-2 bottom-2 rounded-full bg-white/82 px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-[color:var(--accent)]">
+                        Posicionar
+                      </span>
+                    ) : null}
                   </button>
                 );
               }),
@@ -218,13 +231,16 @@ export function CubesSession({
             <h3 className="text-lg font-semibold text-[color:var(--ink)]">
               Área de seleção
             </h3>
+            <p className="mt-1 text-sm text-[color:var(--ink-soft)]">
+              {placedCount}/{pieces.length} posicionadas na grade.
+            </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => selectedPieceId && rotatePiece(selectedPieceId)}
               disabled={!selectedPieceId}
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] px-4 text-sm font-semibold text-[color:var(--ink)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] bg-white/70 px-4 text-sm font-semibold text-[color:var(--ink)] transition hover:border-[color:var(--accent)] hover:text-[color:var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <RotateCw className="h-4 w-4" />
               Girar selecionada
@@ -233,7 +249,7 @@ export function CubesSession({
               type="button"
               onClick={() => selectedPieceId && returnPieceToTray(selectedPieceId)}
               disabled={!selectedPieceId}
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] px-4 text-sm font-semibold text-[color:var(--ink)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[color:var(--line)] bg-white/70 px-4 text-sm font-semibold text-[color:var(--ink)] transition hover:border-[color:var(--danger)] hover:text-[color:var(--danger)] disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Undo2 className="h-4 w-4" />
               Retirar da grade
@@ -241,8 +257,59 @@ export function CubesSession({
           </div>
         </div>
 
+        <div className="mb-5 grid gap-4 xl:grid-cols-[minmax(0,0.62fr)_minmax(0,1fr)]">
+          <div className="rounded-[1.5rem] border border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(247,241,230,0.92))] p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--muted)]">
+              Peça selecionada
+            </p>
+            {selectedPiece ? (
+              <div className="mt-3 flex items-center gap-4">
+                <div className="w-24 shrink-0 rounded-[1.25rem] border border-[color:var(--line)] bg-white p-2 shadow-[0_16px_32px_rgba(98,85,66,0.08)]">
+                  <CubeFacePreview face={selectedPiece.face} className="aspect-square" />
+                </div>
+                <div className="space-y-2">
+                  <p className="text-lg font-semibold text-[color:var(--ink)]">
+                    Peça {pieces.findIndex((piece) => piece.id === selectedPiece.id) + 1}
+                  </p>
+                  <p className="text-sm leading-6 text-[color:var(--ink-soft)]">
+                    pronta para posicionar na grade. Clique em uma célula vazia
+                    ou sobreponha uma peça já colocada.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className="mt-3 text-sm leading-6 text-[color:var(--ink-soft)]">
+                Selecione uma peça abaixo para destacá-la, girar com mais
+                clareza e depois posicioná-la na grade.
+              </p>
+            )}
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-[1.5rem] border border-[color:var(--line)] bg-white/72 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--muted)]">
+                Fluxo rápido
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[color:var(--ink-soft)]">
+                1. Toque em uma peça. 2. Gire se precisar. 3. Toque na célula da
+                grade.
+              </p>
+            </div>
+            <div className="rounded-[1.5rem] border border-[color:var(--line)] bg-white/72 p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--muted)]">
+                Dica visual
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[color:var(--ink-soft)]">
+                Peças já usadas continuam visíveis, mas ficam marcadas como
+                {" "}
+                &quot;Na grade&quot; para facilitar a troca.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div
-          className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6"
+          className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
           onDragOver={(event) => event.preventDefault()}
           onDrop={(event) => {
             event.preventDefault();
@@ -252,8 +319,8 @@ export function CubesSession({
             }
           }}
         >
-          {pieces.map((piece) => {
-            const isPlaced = board.some((row) => row.includes(piece.id));
+          {pieces.map((piece, index) => {
+            const isPlaced = placedPieceIds.has(piece.id);
             const isSelected = selectedPieceId === piece.id;
 
             return (
@@ -261,22 +328,55 @@ export function CubesSession({
                 key={piece.id}
                 type="button"
                 draggable
+                aria-label={`Selecionar peça ${index + 1}`}
+                aria-pressed={isSelected}
                 onDragStart={(event) => {
                   event.dataTransfer.setData("text/plain", piece.id);
                 }}
-                onClick={() => setSelectedPieceId(piece.id)}
+                onClick={() =>
+                  setSelectedPieceId((current) => (current === piece.id ? null : piece.id))
+                }
                 onDoubleClick={() => rotatePiece(piece.id)}
                 className={[
-                  "rounded-[1.2rem] border p-2 transition",
+                  "group flex min-h-36 flex-col rounded-[1.4rem] border p-3 text-left shadow-[0_14px_28px_rgba(98,85,66,0.08)] transition-all",
                   isSelected
-                    ? "border-[color:var(--accent)] bg-[color:var(--accent-soft)]"
-                    : "border-[color:var(--line)] bg-[color:var(--paper)]",
-                  isPlaced && "opacity-55",
+                    ? "border-[color:var(--accent)] bg-[linear-gradient(180deg,rgba(50,111,93,0.18),rgba(255,255,255,0.92))] shadow-[0_20px_36px_rgba(50,111,93,0.18)]"
+                    : "border-[color:var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(246,239,227,0.9))] hover:-translate-y-0.5 hover:border-[color:var(--line-strong)]",
+                  isPlaced && !isSelected && "opacity-75",
                 ]
                   .filter(Boolean)
                   .join(" ")}
               >
-                <CubeFacePreview face={piece.face} className="aspect-square" />
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-[color:var(--muted)]">
+                      Peça {index + 1}
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-[color:var(--ink)]">
+                      {isSelected ? "Selecionada" : isPlaced ? "Na grade" : "Disponível"}
+                    </p>
+                  </div>
+                  <span
+                    className={[
+                      "rounded-full px-2.5 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em]",
+                      isSelected
+                        ? "bg-[color:var(--accent)] text-white"
+                        : isPlaced
+                          ? "bg-[color:var(--surface-strong)] text-[color:var(--ink-soft)]"
+                          : "bg-white text-[color:var(--ink-soft)]",
+                    ].join(" ")}
+                  >
+                    {isSelected ? "Ativa" : isPlaced ? "Usada" : "Livre"}
+                  </span>
+                </div>
+
+                <div className="rounded-[1.2rem] border border-[color:var(--line)] bg-white/88 p-2">
+                  <CubeFacePreview face={piece.face} className="aspect-square" />
+                </div>
+
+                <p className="mt-3 text-sm leading-6 text-[color:var(--ink-soft)]">
+                  Clique para selecionar. Dê dois cliques para girar.
+                </p>
               </button>
             );
           })}

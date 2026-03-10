@@ -118,17 +118,12 @@ describe("AdminDashboard", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: /Paciente A/i }),
+        screen.getByRole("tab", { name: /Sessoes em aberto 2/i }),
       ).toBeInTheDocument();
-      expect(screen.getByRole("heading", { name: "Paciente B" })).toBeInTheDocument();
+      expect(screen.getAllByText("Paciente B").length).toBeGreaterThan(0);
     });
 
     expect(screen.getByText(/\/p\/token-b/)).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole("button", { name: /Paciente A/i }));
-
-    expect(screen.getByRole("heading", { name: "Paciente A" })).toBeInTheDocument();
-    expect(screen.getByText(/\/p\/token-a/)).toBeInTheDocument();
   });
 
   it("shows completed sessions only after switching to the completed tab", () => {

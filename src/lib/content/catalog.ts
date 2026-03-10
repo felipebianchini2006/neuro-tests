@@ -65,7 +65,7 @@ const cubeChallenges: CubeChallenge[] = [
     imageSrc: "/assets/cubes/4.jpg",
     target: [
       ["diag-tl", "diag-tr"],
-      ["diag-br", "diag-bl"],
+      ["diag-tr", "diag-tl"],
     ],
   },
   {
@@ -74,9 +74,9 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 3,
     imageSrc: "/assets/cubes/5.jpg",
     target: [
-      ["diag-tl", "white", "diag-tr"],
+      ["diag-bl", "white", "diag-tl"],
       ["white", "red", "white"],
-      ["diag-bl", "white", "diag-br"],
+      ["diag-br", "white", "diag-tr"],
     ],
   },
   {
@@ -97,7 +97,7 @@ const cubeChallenges: CubeChallenge[] = [
     imageSrc: "/assets/cubes/7.jpg",
     target: [
       ["diag-bl", "diag-br", "diag-tl"],
-      ["diag-tl", "diag-tr", "diag-tr"],
+      ["diag-tl", "diag-tr", "diag-bl"],
       ["diag-br", "diag-bl", "diag-tr"],
     ],
   },
@@ -107,9 +107,9 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 3,
     imageSrc: "/assets/cubes/8.jpg",
     target: [
-      ["white", "diag-tl", "diag-tr"],
-      ["white", "diag-tr", "diag-tl"],
-      ["white", "diag-tr", "white"],
+      ["diag-br", "red", "diag-bl"],
+      ["red", "diag-tl", "white"],
+      ["diag-tr", "white", "diag-br"],
     ],
   },
   {
@@ -118,9 +118,9 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 3,
     imageSrc: "/assets/cubes/9.jpg",
     target: [
-      ["diag-tl", "diag-tl", "white"],
-      ["diag-tl", "diag-tr", "white"],
-      ["diag-tr", "diag-tl", "white"],
+      ["red", "red", "diag-tl"],
+      ["red", "white", "diag-tl"],
+      ["diag-tr", "white", "red"],
     ],
   },
 ];

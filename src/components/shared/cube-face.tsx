@@ -4,9 +4,7 @@ import type { CubeFace } from "@/lib/domain/cubes";
 
 const faceStyles: Record<CubeFace, CSSProperties> = {
   white: {
-    background:
-      "radial-gradient(circle at 25% 25%, rgba(140, 124, 104, 0.18) 0 7%, transparent 8%), #f8f5ec",
-    backgroundSize: "0.8rem 0.8rem",
+    background: "linear-gradient(180deg, #fffdfa 0%, #f2ebdd 100%)",
   },
   red: {
     background: "#b44731",
@@ -46,7 +44,11 @@ export function CubeFacePreview({ face, className, testId }: CubeFaceProps) {
       style={{
         ...(face
           ? faceStyles[face]
-          : { background: "rgba(140, 124, 104, 0.12)" }),
+          : {
+              background:
+                "radial-gradient(circle at 30% 30%, rgba(138, 126, 110, 0.14) 0 0.08rem, transparent 0.1rem), rgba(140, 124, 104, 0.08)",
+              backgroundSize: "0.72rem 0.72rem",
+            }),
       }}
     />
   );

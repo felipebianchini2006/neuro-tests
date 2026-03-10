@@ -38,8 +38,8 @@ describe("content catalog", () => {
     expect(getCubeChallengeAt(8)?.gridSize).toBe(3);
   });
 
-  it("matches the visible cube patterns for the first seven challenge images", () => {
-    expect(contentCatalog.cubeChallenges.slice(0, 7).map((challenge) => challenge.target)).toEqual([
+  it("matches the visible cube patterns for all challenge images", () => {
+    expect(contentCatalog.cubeChallenges.map((challenge) => challenge.target)).toEqual([
       [
         ["diag-br", "diag-bl"],
         ["red", "red"],
@@ -54,12 +54,12 @@ describe("content catalog", () => {
       ],
       [
         ["diag-tl", "diag-tr"],
-        ["diag-br", "diag-bl"],
+        ["diag-tr", "diag-tl"],
       ],
       [
-        ["diag-tl", "white", "diag-tr"],
+        ["diag-bl", "white", "diag-tl"],
         ["white", "red", "white"],
-        ["diag-bl", "white", "diag-br"],
+        ["diag-br", "white", "diag-tr"],
       ],
       [
         ["diag-bl", "diag-tr", "diag-bl"],
@@ -68,8 +68,18 @@ describe("content catalog", () => {
       ],
       [
         ["diag-bl", "diag-br", "diag-tl"],
-        ["diag-tl", "diag-tr", "diag-tr"],
+        ["diag-tl", "diag-tr", "diag-bl"],
         ["diag-br", "diag-bl", "diag-tr"],
+      ],
+      [
+        ["diag-br", "red", "diag-bl"],
+        ["red", "diag-tl", "white"],
+        ["diag-tr", "white", "diag-br"],
+      ],
+      [
+        ["red", "red", "diag-tl"],
+        ["red", "white", "diag-tl"],
+        ["diag-tr", "white", "red"],
       ],
     ]);
   });

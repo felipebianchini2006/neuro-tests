@@ -286,10 +286,8 @@ export function AdminDashboard({
       ]);
       setParticipantCode("");
       setSearchTerm("");
-      startTransition(() => {
-        setSelectedTab("open");
-        setSelectedSessionToken(snapshot.session.token);
-      });
+      setSelectedTab("open");
+      setSelectedSessionToken(snapshot.session.token);
     } catch (creationError) {
       setError(
         creationError instanceof Error
@@ -319,10 +317,8 @@ export function AdminDashboard({
         snapshot.session,
         ...current.filter((session) => session.token !== snapshot.session.token),
       ]);
-      startTransition(() => {
-        setSelectedTab("completed");
-        setSelectedSessionToken(snapshot.session.token);
-      });
+      setSelectedTab("completed");
+      setSelectedSessionToken(snapshot.session.token);
 
       await broadcastSessionSnapshot(createSessionChannel(token), snapshot);
     } catch (completionError) {

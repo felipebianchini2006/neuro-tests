@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import type { CubeChallenge } from "@/lib/content/catalog";
@@ -78,7 +78,24 @@ describe("CubesSession", () => {
     const emptyBoardCell = screen.getAllByRole("button")[0].querySelector("[data-face='empty']");
 
     expect(whiteGuideCell).toHaveAttribute("data-face", "white");
-    expect(whiteGuideCell.getAttribute("style")).toContain("radial-gradient");
-    expect(emptyBoardCell?.getAttribute("style")).not.toContain("radial-gradient");
+    expect(whiteGuideCell.getAttribute("style")).toContain("linear-gradient");
+    expect(emptyBoardCell?.getAttribute("style")).not.toContain("linear-gradient");
+  });
+
+  it("shows the selected piece in a dedicated panel before placement", () => {
+    render(
+      <CubesSession
+        challenge={challenge}
+        initialTray={initialTray}
+        busy={false}
+        onSubmit={async () => {}}
+        onAdvance={async () => {}}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /selecionar peça 1/i }));
+
+    expect(screen.getByText("Peça selecionada")).toBeInTheDocument();
+    expect(screen.getByText(/pronta para posicionar na grade/i)).toBeInTheDocument();
   });
 });
