@@ -17,13 +17,17 @@ const collator = new Intl.Collator("pt-BR", {
   sensitivity: "base",
 });
 const explicitStoryFrameFiles = {
+  "1 - CAP": ["1.1  - CAP.jpg", "1.2 - CAP.jpg", "1.3 - CAP.jpg"],
+  "2 - CHASE": ["1 - CHASE.jpg", "2 - CHASE.jpg", "3 - CHASE.jpg", "4 - CHASE.jpg", "5 - CHASE.jpg"],
+  "3 - BAKE": ["1.jpg", "2.jpg", "3.jpg", "4.jpg"],
+  "4 - OPENS": ["2.jpg", "4.jpg", "1.jpg", "3.jpg", "5.jpg"],
   "5 - HUNT": ["4.jpg", "3.jpg", "2.jpg", "5.png"],
   "6 - DREAMS": ["2D.jpg", "4R.jpg", "3E.jpg", "1A.jpg", "5M.jpg"],
   "7 - CLEAM": ["3.jpg", "5.jpg", "4.jpg", "2.jpg", "1.jpg"],
-  "8 - CHOIR": ["4.jpg", "3.jpg", "1.jpg", "5.jpg", "2.jpg"],
+  "8 - CHOIR": ["2.jpg", "1.jpg", "3.jpg", "4.jpg", "5.jpg"],
   "9 - LUNCH": ["5.jpg", "1.jpg", "4.jpg", "2.jpg", "3.jpg"],
-  "10 - SHARK": ["2.jpg", "5.jpg", "1.jpg", "3.jpg", "4.jpg"],
-  "11 - SAMUEL": ["6.jpg", "1.jpg", "4.jpg", "5.jpg", "3.jpg", "2.jpg"],
+  "10 - SHARK": ["3.jpg", "1.jpg", "2.jpg", "4.jpg", "5.jpg"],
+  "11 - SAMUEL": ["5.jpg", "4.jpg", "1.jpg", "3.jpg", "2.jpg", "6.jpg"],
 };
 
 function getFileLabel(fileName) {

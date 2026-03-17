@@ -16,8 +16,8 @@ export const generatedSequenceSources = [
     "frameSources": [
       "/assets/sequence/2%20-%20CHASE/1%20-%20CHASE.jpg",
       "/assets/sequence/2%20-%20CHASE/2%20-%20CHASE.jpg",
-      "/assets/sequence/2%20-%20CHASE/4%20-%20CHASE.jpg",
       "/assets/sequence/2%20-%20CHASE/3%20-%20CHASE.jpg",
+      "/assets/sequence/2%20-%20CHASE/4%20-%20CHASE.jpg",
       "/assets/sequence/2%20-%20CHASE/5%20-%20CHASE.jpg"
     ]
   },
@@ -84,11 +84,11 @@ export const generatedSequenceSources = [
     "title": "8 - CHOIR",
     "guideSource": "/assets/sequence/8%20-%20CHOIR/CHOIR.jpg",
     "frameSources": [
-      "/assets/sequence/8%20-%20CHOIR/4.jpg",
-      "/assets/sequence/8%20-%20CHOIR/3.jpg",
+      "/assets/sequence/8%20-%20CHOIR/2.jpg",
       "/assets/sequence/8%20-%20CHOIR/1.jpg",
-      "/assets/sequence/8%20-%20CHOIR/5.jpg",
-      "/assets/sequence/8%20-%20CHOIR/2.jpg"
+      "/assets/sequence/8%20-%20CHOIR/3.jpg",
+      "/assets/sequence/8%20-%20CHOIR/4.jpg",
+      "/assets/sequence/8%20-%20CHOIR/5.jpg"
     ]
   },
   {
@@ -108,11 +108,11 @@ export const generatedSequenceSources = [
     "title": "10 - SHARK",
     "guideSource": "/assets/sequence/10%20-%20SHARK/SHARK.jpg",
     "frameSources": [
-      "/assets/sequence/10%20-%20SHARK/2.jpg",
-      "/assets/sequence/10%20-%20SHARK/5.jpg",
-      "/assets/sequence/10%20-%20SHARK/1.jpg",
       "/assets/sequence/10%20-%20SHARK/3.jpg",
-      "/assets/sequence/10%20-%20SHARK/4.jpg"
+      "/assets/sequence/10%20-%20SHARK/1.jpg",
+      "/assets/sequence/10%20-%20SHARK/2.jpg",
+      "/assets/sequence/10%20-%20SHARK/4.jpg",
+      "/assets/sequence/10%20-%20SHARK/5.jpg"
     ]
   },
   {
@@ -120,12 +120,12 @@ export const generatedSequenceSources = [
     "title": "11 - SAMUEL",
     "guideSource": "/assets/sequence/11%20-%20SAMUEL/SAMUEL.jpg",
     "frameSources": [
-      "/assets/sequence/11%20-%20SAMUEL/6.jpg",
-      "/assets/sequence/11%20-%20SAMUEL/1.jpg",
-      "/assets/sequence/11%20-%20SAMUEL/4.jpg",
       "/assets/sequence/11%20-%20SAMUEL/5.jpg",
+      "/assets/sequence/11%20-%20SAMUEL/4.jpg",
+      "/assets/sequence/11%20-%20SAMUEL/1.jpg",
       "/assets/sequence/11%20-%20SAMUEL/3.jpg",
-      "/assets/sequence/11%20-%20SAMUEL/2.jpg"
+      "/assets/sequence/11%20-%20SAMUEL/2.jpg",
+      "/assets/sequence/11%20-%20SAMUEL/6.jpg"
     ]
   }
 ] as const;

@@ -7,6 +7,7 @@ export type SequenceStory = {
     label: string;
   }[];
   correctOrder: string[];
+  alternativeOrders?: string[][];
 };
 
 function slugify(value: string) {
@@ -87,9 +88,10 @@ export function isSequenceAnswerCorrect(
   story: SequenceStory,
   answer: string[],
 ) {
-  if (answer.length !== story.correctOrder.length) {
-    return false;
-  }
-
-  return story.correctOrder.every((frameId, index) => frameId === answer[index]);
+  const allValid = [story.correctOrder, ...(story.alternativeOrders ?? [])];
+  return allValid.some(
+    (order) =>
+      answer.length === order.length &&
+      order.every((frameId, index) => frameId === answer[index]),
+  );
 }

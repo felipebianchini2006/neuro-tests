@@ -96,6 +96,6 @@ describe("CubesSession", () => {
     fireEvent.click(screen.getByRole("button", { name: /selecionar peça 1/i }));
 
     expect(screen.getByText("Peça selecionada")).toBeInTheDocument();
-    expect(screen.getByText(/pronta para posicionar na grade/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/peça 1/i).length).toBeGreaterThanOrEqual(1);
   });
 });

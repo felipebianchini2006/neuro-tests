@@ -27,6 +27,21 @@ const sequenceStories = generatedSequenceSources.map((entry) =>
   buildSequenceStory(entry.title, [...entry.frameSources]),
 );
 
+// CHASE has two clinically valid orderings (photos 1 and 2 from client reference).
+// Primary order (1-2-3-4-5) is set via manifest; the alternative (1-2-4-3-5) is patched here.
+const chaseStory = sequenceStories.find((s) => s.id === "2-chase");
+if (chaseStory) {
+  chaseStory.alternativeOrders = [
+    [
+      "2-chase-1-chase-jpg",
+      "2-chase-2-chase-jpg",
+      "2-chase-4-chase-jpg",
+      "2-chase-3-chase-jpg",
+      "2-chase-5-chase-jpg",
+    ],
+  ];
+}
+
 const cubeChallenges: CubeChallenge[] = [
   {
     id: "cubes-01",
