@@ -140,9 +140,125 @@ const cubeChallenges: CubeChallenge[] = [
   },
 ];
 
+const cubeChallengesTeen: CubeChallenge[] = [
+  {
+    id: "cubes-teen-01",
+    title: "Cubos A1",
+    gridSize: 2,
+    imageSrc: "/assets/cubes-teen/3.jpg",
+    target: [["white", "red"], ["red", "white"]],
+  },
+  {
+    id: "cubes-teen-02",
+    title: "Cubos A2",
+    gridSize: 2,
+    imageSrc: "/assets/cubes-teen/4.jpg",
+    target: [["red", "diag-bl"], ["red", "red"]],
+  },
+  {
+    id: "cubes-teen-03",
+    title: "Cubos A3",
+    gridSize: 2,
+    imageSrc: "/assets/cubes-teen/5.jpg",
+    target: [["diag-tl", "white"], ["diag-bl", "white"]],
+  },
+  {
+    id: "cubes-teen-04",
+    title: "Cubos A4",
+    gridSize: 2,
+    imageSrc: "/assets/cubes-teen/6.jpg",
+    target: [["red", "red"], ["diag-tl", "diag-tr"]],
+  },
+  {
+    id: "cubes-teen-05",
+    title: "Cubos A5",
+    gridSize: 2,
+    imageSrc: "/assets/cubes-teen/7.jpg",
+    target: [["diag-br", "diag-bl"], ["diag-tr", "diag-tl"]],
+  },
+  {
+    id: "cubes-teen-06",
+    title: "Cubos A6",
+    gridSize: 2,
+    imageSrc: "/assets/cubes-teen/8.jpg",
+    target: [["red", "diag-tl"], ["diag-br", "red"]],
+  },
+  {
+    id: "cubes-teen-07",
+    title: "Cubos A7",
+    gridSize: 2,
+    imageSrc: "/assets/cubes-teen/9.jpg",
+    target: [["diag-bl", "diag-br"], ["diag-tl", "diag-tr"]],
+  },
+  {
+    id: "cubes-teen-08",
+    title: "Cubos A8",
+    gridSize: 2,
+    imageSrc: "/assets/cubes-teen/10.jpg",
+    target: [["diag-tr", "diag-bl"], ["diag-tl", "diag-tr"]],
+  },
+  {
+    id: "cubes-teen-09",
+    title: "Cubos A9",
+    gridSize: 3,
+    imageSrc: "/assets/cubes-teen/11.jpg",
+    target: [
+      ["diag-br", "diag-bl", "diag-bl"],
+      ["diag-br", "red", "diag-tl"],
+      ["diag-tr", "diag-tr", "diag-tl"],
+    ],
+  },
+  {
+    id: "cubes-teen-10",
+    title: "Cubos A10",
+    gridSize: 3,
+    imageSrc: "/assets/cubes-teen/12.jpg",
+    target: [
+      ["diag-tl", "diag-tr", "diag-tl"],
+      ["diag-br", "diag-bl", "diag-br"],
+      ["diag-tr", "diag-tr", "diag-tl"],
+    ],
+  },
+  {
+    id: "cubes-teen-11",
+    title: "Cubos A11",
+    gridSize: 3,
+    imageSrc: "/assets/cubes-teen/13.jpg",
+    target: [
+      ["red", "diag-tl", "white"],
+      ["diag-tr", "white", "white"],
+      ["diag-tr", "white", "white"],
+    ],
+  },
+  {
+    id: "cubes-teen-12",
+    title: "Cubos A12",
+    gridSize: 3,
+    imageSrc: "/assets/cubes-teen/14.jpg",
+    target: [
+      ["diag-br", "red", "diag-bl"],
+      ["red", "white", "red"],
+      ["diag-tr", "red", "diag-tl"],
+    ],
+  },
+];
+
+export function getCubeChallengeTeenAt(index: number) {
+  return cubeChallengesTeen[index] ?? null;
+}
+
+export function validateCubeTeenAnswer(
+  itemIndex: number,
+  board: (CubeFace | null)[][],
+) {
+  const challenge = getCubeChallengeTeenAt(itemIndex);
+  if (!challenge) return false;
+  return isCubeBoardCorrect(challenge.target, board);
+}
+
 export function getTotalItems(testType: TestType) {
   if (testType === "sequence") return sequenceStories.length;
-  if (testType === "cubes-teen") return 0; // populated in Task 2
+  if (testType === "cubes-teen") return cubeChallengesTeen.length;
   if (testType === "puzzle") return 0;     // populated in Task 5
   return cubeChallenges.length;
 }
@@ -194,6 +310,10 @@ export function validateCubeAnswer(
 export function getItemTitle(testType: TestType, itemIndex: number) {
   if (testType === "sequence") {
     return getSequenceStoryAt(itemIndex)?.title ?? `Historia ${itemIndex + 1}`;
+  }
+
+  if (testType === "cubes-teen") {
+    return getCubeChallengeTeenAt(itemIndex)?.title ?? `Cubos A${itemIndex + 1}`;
   }
 
   return getCubeChallengeAt(itemIndex)?.title ?? `Cubos ${itemIndex + 1}`;

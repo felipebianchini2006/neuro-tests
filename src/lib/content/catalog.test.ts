@@ -3,7 +3,10 @@ import { describe, expect, it } from "vitest";
 import {
   contentCatalog,
   getCubeChallengeAt,
+  getCubeChallengeTeenAt,
   getSequenceStoryAt,
+  getTotalItems,
+  validateCubeTeenAnswer,
 } from "@/lib/content/catalog";
 import { generatedSequenceSources } from "@/lib/content/sequence-manifest.generated";
 
@@ -130,5 +133,45 @@ describe("content catalog", () => {
       "10 - SHARK": ["3", "1", "2", "4", "5"],
       "11 - SAMUEL": ["5", "4", "1", "3", "2", "6"],
     });
+  });
+});
+
+describe("cubes-teen catalog", () => {
+  it("getTotalItems returns 12 for cubes-teen", () => {
+    expect(getTotalItems("cubes-teen")).toBe(12);
+  });
+
+  it("challenges 0-7 (images 3-10) are 2x2", () => {
+    for (let i = 0; i <= 7; i++) {
+      const c = getCubeChallengeTeenAt(i);
+      expect(c?.gridSize, `challenge ${i}`).toBe(2);
+      expect(c?.target).toHaveLength(2);
+      expect(c?.target[0]).toHaveLength(2);
+    }
+  });
+
+  it("challenges 8-11 (images 11-14) are 3x3", () => {
+    for (let i = 8; i <= 11; i++) {
+      const c = getCubeChallengeTeenAt(i);
+      expect(c?.gridSize, `challenge ${i}`).toBe(3);
+      expect(c?.target).toHaveLength(3);
+      expect(c?.target[0]).toHaveLength(3);
+    }
+  });
+
+  it("getCubeChallengeTeenAt returns null for out-of-range index", () => {
+    expect(getCubeChallengeTeenAt(12)).toBeNull();
+    expect(getCubeChallengeTeenAt(-1)).toBeNull();
+  });
+
+  it("validateCubeTeenAnswer returns false for wrong answer", () => {
+    // challenge 0 target is [["white","red"],["red","white"]]
+    // wrong board:
+    expect(validateCubeTeenAnswer(0, [["red", "white"], ["white", "red"]])).toBe(false);
+  });
+
+  it("validateCubeTeenAnswer returns true for correct answer", () => {
+    // challenge 0: [["white","red"],["red","white"]]
+    expect(validateCubeTeenAnswer(0, [["white", "red"], ["red", "white"]])).toBe(true);
   });
 });
