@@ -2,8 +2,11 @@ import { NextResponse } from "next/server";
 
 import {
   validateCubeAnswer,
+  validateCubeTeenAnswer,
   validateSequenceAnswer,
 } from "@/lib/content/catalog";
+import { validatePuzzleAnswer } from "@/lib/content/puzzle-catalog";
+import type { PiecePlacement } from "@/lib/domain/puzzle";
 import { buildParticipantSessionState } from "@/lib/server/participant-session-state";
 import { getSessionRepository } from "@/lib/server/session-repository";
 
@@ -34,12 +37,26 @@ export async function POST(
           body.itemIndex,
           Array.isArray(body.answerPayload) ? (body.answerPayload as string[]) : [],
         )
-      : validateCubeAnswer(
-          body.itemIndex,
-          Array.isArray(body.answerPayload)
-            ? (body.answerPayload as (import("@/lib/domain/cubes").CubeFace | null)[][])
-            : [],
-        );
+      : existing.session.testType === "cubes-teen"
+        ? validateCubeTeenAnswer(
+            body.itemIndex,
+            Array.isArray(body.answerPayload)
+              ? (body.answerPayload as (import("@/lib/domain/cubes").CubeFace | null)[][])
+              : [],
+          )
+        : existing.session.testType === "puzzle"
+          ? validatePuzzleAnswer(
+              body.itemIndex,
+              Array.isArray(body.answerPayload)
+                ? (body.answerPayload as PiecePlacement[])
+                : [],
+            )
+          : validateCubeAnswer(
+              body.itemIndex,
+              Array.isArray(body.answerPayload)
+                ? (body.answerPayload as (import("@/lib/domain/cubes").CubeFace | null)[][])
+                : [],
+            );
 
   const snapshot = await repository.recordAnswer({
     token,
