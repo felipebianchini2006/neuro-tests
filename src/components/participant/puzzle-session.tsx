@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { RotateCw } from "lucide-react";
 
@@ -50,6 +50,13 @@ export function PuzzleSession({
   );
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
+
+  // Reset submitted flag after a wrong attempt so participant can keep trying
+  useEffect(() => {
+    if (submitted && currentRecord?.isCorrect === false) {
+      setSubmitted(false);
+    }
+  }, [submitted, currentRecord?.isCorrect]);
 
   const canvasRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
@@ -129,14 +136,6 @@ export function PuzzleSession({
         onPointerLeave={handlePointerUp}
       >
         <div className="absolute inset-0">
-          {/* Ghost reference image */}
-          <img
-            src={challenge.imageSrc}
-            className="pointer-events-none absolute inset-0 h-3/4 w-full select-none object-contain opacity-10"
-            alt=""
-            draggable={false}
-          />
-
           {/* Puzzle pieces */}
           {challenge.pieces.map((piece, idx) => {
             const placement = placements[idx];
