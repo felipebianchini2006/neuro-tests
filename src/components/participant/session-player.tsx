@@ -147,7 +147,9 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
             <h1 className="mt-2 text-3xl font-semibold text-[color:var(--ink)]">
               {snapshot.session.testType === "sequence"
                 ? "Arranjo de Figuras"
-                : "Cubos"}
+                : snapshot.session.testType === "cubes-teen"
+                  ? "Cubos (Adolescente)"
+                  : "Cubos"}
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--ink-soft)]">
               Item {Math.min(currentIndex + 1, snapshot.session.totalItems)} de{" "}
@@ -206,7 +208,9 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
         />
       ) : null}
 
-      {snapshot.session.testType === "cubes" && cubeChallenge ? (
+      {(snapshot.session.testType === "cubes" ||
+        snapshot.session.testType === "cubes-teen") &&
+      cubeChallenge ? (
         <CubesSession
           key={`${snapshot.session.token}:${cubeChallenge.id}`}
           challenge={cubeChallenge}
