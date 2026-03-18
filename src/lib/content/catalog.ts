@@ -13,7 +13,7 @@ import {
 
 import { generatedSequenceSources } from "./sequence-manifest.generated";
 
-export type TestType = "sequence" | "cubes";
+export type TestType = "sequence" | "cubes" | "cubes-teen" | "puzzle";
 
 export type CubeChallenge = {
   id: string;
@@ -141,7 +141,10 @@ const cubeChallenges: CubeChallenge[] = [
 ];
 
 export function getTotalItems(testType: TestType) {
-  return testType === "sequence" ? sequenceStories.length : cubeChallenges.length;
+  if (testType === "sequence") return sequenceStories.length;
+  if (testType === "cubes-teen") return 0; // populated in Task 2
+  if (testType === "puzzle") return 0;     // populated in Task 5
+  return cubeChallenges.length;
 }
 
 export function getSequenceStoryAt(index: number) {
