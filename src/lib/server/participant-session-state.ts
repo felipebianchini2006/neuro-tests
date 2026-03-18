@@ -1,5 +1,6 @@
 import {
   getCubeChallengeAt,
+  getCubeChallengeTeenAt,
   getCubeTrayForSession,
   getPromptSequenceFrames,
   getSequenceStoryAt,
@@ -49,6 +50,21 @@ export function buildParticipantSessionState(
               story,
               snapshot.session.token,
             ).map((frame) => frame.id),
+          }
+        : null,
+    };
+  }
+
+  if (snapshot.session.testType === "cubes-teen") {
+    const challenge = getCubeChallengeTeenAt(currentIndex);
+
+    return {
+      snapshot,
+      currentItem: challenge
+        ? {
+            kind: "cubes",
+            challenge,
+            initialTray: getCubeTrayForSession(challenge, snapshot.session.token),
           }
         : null,
     };
