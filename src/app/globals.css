@@ -1,28 +1,21 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f5efe4;
-  --paper: #fcf9f2;
-  --surface: rgba(255, 252, 245, 0.84);
-  --surface-strong: #efe5d2;
-  --ink: #1f1d18;
-  --ink-soft: #5d564b;
-  --muted: #8a7e6e;
-  --line: rgba(98, 85, 66, 0.18);
-  --line-strong: rgba(98, 85, 66, 0.34);
-  --accent: #326f5d;
-  --accent-soft: rgba(50, 111, 93, 0.12);
-  --admin-strong: #2f5d51;
-  --admin-strong-hover: #274d43;
-  --admin-strong-surface: rgba(47, 93, 81, 0.94);
-  --admin-strong-shadow: rgba(47, 93, 81, 0.18);
-  --admin-disabled-surface: rgba(47, 93, 81, 0.14);
-  --admin-disabled-border: rgba(47, 93, 81, 0.2);
-  --admin-disabled-text: #5b6f68;
+  --background: #f1f5f9;
+  --surface: white;
+  --surface-secondary: #f8fafc;
+  --ink: #0f172a;
+  --ink-soft: #475569;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --accent: #1d4ed8;
+  --accent-soft: #eff6ff;
+  --success: #15803d;
+  --success-soft: #f0fdf4;
+  --warning: #92400e;
+  --warning-soft: #fffbeb;
   --danger: #b44731;
   --danger-soft: rgba(180, 71, 49, 0.12);
-  --success: #2b6e5b;
-  --success-soft: rgba(43, 110, 91, 0.14);
 }
 
 @theme inline {
@@ -38,9 +31,7 @@
 
 html {
   min-height: 100%;
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.7), transparent 30%),
-    linear-gradient(180deg, #f7f1e6 0%, #efe5d6 100%);
+  background: #f1f5f9;
 }
 
 body {
