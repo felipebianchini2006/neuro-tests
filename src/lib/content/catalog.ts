@@ -4,6 +4,7 @@ import {
   type CubeFace,
   type CubePiece,
 } from "@/lib/domain/cubes";
+import { puzzleChallenges } from "./puzzle-catalog";
 import {
   buildSequenceStory,
   createSequenceSeedShuffle,
@@ -259,7 +260,7 @@ export function validateCubeTeenAnswer(
 export function getTotalItems(testType: TestType) {
   if (testType === "sequence") return sequenceStories.length;
   if (testType === "cubes-teen") return cubeChallengesTeen.length;
-  if (testType === "puzzle") return 0;     // populated in Task 5
+  if (testType === "puzzle") return puzzleChallenges.length;
   return cubeChallenges.length;
 }
 
