@@ -6,7 +6,9 @@ import {
   getSequenceStoryAt,
   type CubeChallenge,
 } from "@/lib/content/catalog";
+import { getPuzzleChallengeAt } from "@/lib/content/puzzle-catalog";
 import type { CubePiece } from "@/lib/domain/cubes";
+import type { PuzzleChallenge } from "@/lib/domain/puzzle";
 import type { SequenceStory } from "@/lib/domain/sequence";
 
 import type { SessionSnapshot } from "./session-repository";
@@ -21,6 +23,10 @@ export type ParticipantCurrentItem =
       kind: "cubes";
       challenge: CubeChallenge;
       initialTray: CubePiece[];
+    }
+  | {
+      kind: "puzzle";
+      challenge: PuzzleChallenge;
     }
   | null;
 
@@ -67,6 +73,15 @@ export function buildParticipantSessionState(
             initialTray: getCubeTrayForSession(challenge, snapshot.session.token),
           }
         : null,
+    };
+  }
+
+  if (snapshot.session.testType === "puzzle") {
+    const challenge = getPuzzleChallengeAt(currentIndex);
+
+    return {
+      snapshot,
+      currentItem: challenge ? { kind: "puzzle", challenge } : null,
     };
   }
 

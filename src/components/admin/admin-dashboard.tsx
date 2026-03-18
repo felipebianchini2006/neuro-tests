@@ -19,6 +19,7 @@ import {
   ExternalLink,
   LayoutGrid,
   LogOut,
+  Puzzle,
   Plus,
   Search,
   Target,
@@ -60,6 +61,7 @@ function buildSessionUrl(origin: string, kind: "p" | "o", token: string) {
 function getTestTypeLabel(testType: TestType) {
   if (testType === "sequence") return "Arranjo de Figuras";
   if (testType === "cubes-teen") return "Cubos (Adolescente)";
+  if (testType === "puzzle") return "Quebra-Cabeça";
   return "Cubos";
 }
 
@@ -510,7 +512,7 @@ export function AdminDashboard({
                   <p className="text-sm font-medium text-[color:var(--ink)]">
                     Tipo de teste
                   </p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                     {[
                       {
                         id: "sequence" as const,
@@ -526,6 +528,11 @@ export function AdminDashboard({
                         id: "cubes-teen" as const,
                         label: "C. Adolescente",
                         icon: <Boxes className="h-4 w-4" />,
+                      },
+                      {
+                        id: "puzzle" as const,
+                        label: "Quebra-Cabeça",
+                        icon: <Puzzle className="h-4 w-4" />,
                       },
                     ].map((option) => {
                       const isActive = testType === option.id;
@@ -653,6 +660,8 @@ export function AdminDashboard({
                                 <LayoutGrid className="h-4 w-4 text-[color:var(--accent)]" />
                               ) : session.testType === "cubes" || session.testType === "cubes-teen" ? (
                                 <Boxes className="h-4 w-4 text-[color:var(--accent)]" />
+                              ) : session.testType === "puzzle" ? (
+                                <Puzzle className="h-4 w-4 text-[color:var(--accent)]" />
                               ) : null}
                               <span className="truncate font-medium text-[color:var(--ink)]">
                                 {session.participantCode}

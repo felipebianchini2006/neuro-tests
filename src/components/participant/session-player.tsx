@@ -13,6 +13,7 @@ import {
 import type { ParticipantSessionState } from "@/lib/server/participant-session-state";
 
 import { CubesSession } from "./cubes-session";
+import { PuzzleSession } from "./puzzle-session";
 import { SequenceSession } from "./sequence-session";
 
 type SessionPlayerProps = {
@@ -34,8 +35,8 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
 
   const currentItem = playerState.currentItem;
   const sequenceStory = currentItem?.kind === "sequence" ? currentItem.story : null;
-  const cubeChallenge =
-    currentItem?.kind === "cubes" ? currentItem.challenge : null;
+  const cubeChallenge = currentItem?.kind === "cubes" ? currentItem.challenge : null;
+  const puzzleChallenge = currentItem?.kind === "puzzle" ? currentItem.challenge : null;
 
   useEffect(() => {
     const channel = createSessionChannel(snapshot.session.token);
@@ -149,7 +150,9 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
                 ? "Arranjo de Figuras"
                 : snapshot.session.testType === "cubes-teen"
                   ? "Cubos (Adolescente)"
-                  : "Cubos"}
+                  : snapshot.session.testType === "puzzle"
+                    ? "Quebra-Cabeça"
+                    : "Cubos"}
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--ink-soft)]">
               Item {Math.min(currentIndex + 1, snapshot.session.totalItems)} de{" "}
@@ -220,6 +223,18 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
           currentRecord={currentRecord}
           busy={busy}
           onSubmit={submit}
+          onAdvance={advance}
+        />
+      ) : null}
+
+      {snapshot.session.testType === "puzzle" && puzzleChallenge ? (
+        <PuzzleSession
+          key={`${snapshot.session.token}:${puzzleChallenge.id}`}
+          challenge={puzzleChallenge}
+          currentIndex={currentIndex}
+          currentRecord={currentRecord}
+          busy={busy}
+          onAnswer={submit}
           onAdvance={advance}
         />
       ) : null}
