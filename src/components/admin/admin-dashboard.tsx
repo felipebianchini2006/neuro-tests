@@ -161,7 +161,7 @@ function LinkCard({
           href={href}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-[color:var(--ink)] px-3 text-sm font-semibold text-white transition duration-150 hover:bg-slate-800"
+          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg bg-[color:var(--ink)] px-3 text-sm font-semibold text-white shadow-[inset_0_0_0_1px_rgba(15,23,42,0.12)] transition duration-150 hover:bg-slate-800 hover:text-white [&_svg]:text-white"
         >
           <ExternalLink className="h-3.5 w-3.5" />
           Abrir
@@ -514,7 +514,7 @@ export function AdminDashboard({
                     },
                     {
                       id: "cubes-teen" as const,
-                      label: "C. Adolescente",
+                      label: "Adolescente",
                       icon: <Boxes className="h-3.5 w-3.5" />,
                     },
                     {

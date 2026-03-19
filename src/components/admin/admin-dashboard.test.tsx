@@ -233,6 +233,88 @@ describe("AdminDashboard", () => {
     expect(screen.queryByText("Unexpected end of JSON input")).not.toBeInTheDocument();
   });
 
+  it("shows the adolescent test option with the updated label", () => {
+    render(<AdminDashboard persistentStoreEnabled initialSessions={[]} />);
+
+    expect(
+      screen.getByRole("button", { name: /^Adolescente$/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /C\\. Adolescente/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("submits adolescent and puzzle test types with their internal ids", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          snapshot: {
+            session: { ...buildSessionRecord("Paciente Teen", "token-teen"), testType: "cubes-teen" },
+            items: [],
+          },
+        }),
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          snapshot: {
+            session: { ...buildSessionRecord("Paciente Puzzle", "token-puzzle"), testType: "puzzle" },
+            items: [],
+          },
+        }),
+      });
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<AdminDashboard persistentStoreEnabled initialSessions={[]} />);
+
+    fireEvent.change(screen.getByPlaceholderText("Ex.: Paciente 08-03 / R.B."), {
+      target: { value: "Paciente Teen" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Adolescente/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      1,
+      "/api/admin/sessions",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          participantCode: "Paciente Teen",
+          testType: "cubes-teen",
+        }),
+      }),
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("Ex.: Paciente 08-03 / R.B."), {
+      target: { value: "Paciente Puzzle" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Quebra-Cabeca/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
+      "/api/admin/sessions",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          participantCode: "Paciente Puzzle",
+          testType: "puzzle",
+        }),
+      }),
+    );
+  });
+
   it("keeps the compact creation area labels visible", () => {
     render(
       <AdminDashboard
@@ -266,5 +348,20 @@ describe("AdminDashboard", () => {
     );
 
     expect(participantLink).toHaveClass("break-all");
+  });
+
+  it("keeps the open-link action with explicit high-contrast text and icon colors", () => {
+    render(
+      <AdminDashboard
+        persistentStoreEnabled
+        initialSessions={[buildSessionRecord("Paciente A", "token-a")]}
+      />,
+    );
+
+    const openLinks = screen.getAllByRole("link", { name: /Abrir/i });
+
+    expect(openLinks[0]).toHaveClass("text-white");
+    expect(openLinks[0]).toHaveClass("hover:text-white");
+    expect(openLinks[0]).toHaveClass("[&_svg]:text-white");
   });
 });
