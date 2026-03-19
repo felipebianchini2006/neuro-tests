@@ -176,26 +176,101 @@ describe("content catalog", () => {
 });
 
 describe("cubes-teen catalog", () => {
+  const expectedTeenChallenges = [
+    {
+      imageSrc: "/assets/cubes-teen/3.jpg",
+      gridSize: 2,
+      target: [["white", "red"], ["red", "white"]],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/4.jpg",
+      gridSize: 2,
+      target: [["red", "diag-bl"], ["red", "red"]],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/5.jpg",
+      gridSize: 2,
+      target: [["diag-tl", "white"], ["diag-bl", "white"]],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/6.jpg",
+      gridSize: 2,
+      target: [["red", "red"], ["diag-tl", "diag-tr"]],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/7.jpg",
+      gridSize: 2,
+      target: [["diag-br", "diag-bl"], ["diag-tr", "diag-tl"]],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/8.jpg",
+      gridSize: 2,
+      target: [["red", "diag-bl"], ["diag-tr", "red"]],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/9.jpg",
+      gridSize: 2,
+      target: [["diag-bl", "diag-br"], ["diag-tl", "diag-tr"]],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/10.jpg",
+      gridSize: 2,
+      target: [["diag-tr", "diag-bl"], ["diag-tl", "diag-tr"]],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/11.jpg",
+      gridSize: 3,
+      target: [
+        ["diag-br", "diag-bl", "diag-bl"],
+        ["diag-br", "red", "diag-tl"],
+        ["diag-tr", "diag-tr", "diag-tl"],
+      ],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/12.jpg",
+      gridSize: 3,
+      target: [
+        ["diag-tl", "diag-tr", "diag-tl"],
+        ["diag-br", "diag-bl", "diag-br"],
+        ["diag-tr", "diag-tr", "diag-tl"],
+      ],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/13.jpg",
+      gridSize: 3,
+      target: [
+        ["white", "red", "white"],
+        ["white", "red", "white"],
+        ["white", "diag-tl", "white"],
+      ],
+    },
+    {
+      imageSrc: "/assets/cubes-teen/14.jpg",
+      gridSize: 3,
+      target: [
+        ["white", "diag-tl", "white"],
+        ["diag-bl", "white", "diag-tr"],
+        ["white", "diag-br", "white"],
+      ],
+    },
+  ] as const;
+
   it("getTotalItems returns 12 for cubes-teen", () => {
     expect(getTotalItems("cubes-teen")).toBe(12);
   });
 
-  it("challenges 0-7 (images 3-10) are 2x2", () => {
-    for (let i = 0; i <= 7; i++) {
-      const c = getCubeChallengeTeenAt(i);
-      expect(c?.gridSize, `challenge ${i}`).toBe(2);
-      expect(c?.target).toHaveLength(2);
-      expect(c?.target[0]).toHaveLength(2);
-    }
-  });
+  it("keeps every adolescent challenge aligned with the client zip order and targets", () => {
+    const teenChallenges = expectedTeenChallenges.map((_, index) =>
+      getCubeChallengeTeenAt(index),
+    );
 
-  it("challenges 8-11 (images 11-14) are 3x3", () => {
-    for (let i = 8; i <= 11; i++) {
-      const c = getCubeChallengeTeenAt(i);
-      expect(c?.gridSize, `challenge ${i}`).toBe(3);
-      expect(c?.target).toHaveLength(3);
-      expect(c?.target[0]).toHaveLength(3);
-    }
+    expect(
+      teenChallenges.map((challenge) => ({
+        imageSrc: challenge?.imageSrc,
+        gridSize: challenge?.gridSize,
+        target: challenge?.target,
+      })),
+    ).toEqual(expectedTeenChallenges);
   });
 
   it("getCubeChallengeTeenAt returns null for out-of-range index", () => {
@@ -203,14 +278,31 @@ describe("cubes-teen catalog", () => {
     expect(getCubeChallengeTeenAt(-1)).toBeNull();
   });
 
+  it("keeps the first corrected 2x2 challenge in checkerboard order", () => {
+    expect(getCubeChallengeTeenAt(0)?.target).toEqual([
+      ["white", "red"],
+      ["red", "white"],
+    ]);
+  });
+
+  it("keeps the corrected 8.jpg diagonal orientation", () => {
+    expect(getCubeChallengeTeenAt(5)?.target).toEqual([
+      ["red", "diag-bl"],
+      ["diag-tr", "red"],
+    ]);
+  });
+
   it("validateCubeTeenAnswer returns false for wrong answer", () => {
-    // challenge 0 target is [["white","red"],["red","white"]]
-    // wrong board:
     expect(validateCubeTeenAnswer(0, [["red", "white"], ["white", "red"]])).toBe(false);
   });
 
-  it("validateCubeTeenAnswer returns true for correct answer", () => {
-    // challenge 0: [["white","red"],["red","white"]]
-    expect(validateCubeTeenAnswer(0, [["white", "red"], ["red", "white"]])).toBe(true);
+  it("validateCubeTeenAnswer returns true for a corrected 3x3 challenge", () => {
+    expect(
+      validateCubeTeenAnswer(11, [
+        ["white", "diag-tl", "white"],
+        ["diag-bl", "white", "diag-tr"],
+        ["white", "diag-br", "white"],
+      ]),
+    ).toBe(true);
   });
 });
