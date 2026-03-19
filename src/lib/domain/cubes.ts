@@ -30,6 +30,19 @@ function stableHash(value: string) {
   return hash;
 }
 
+function seededShuffle<T>(values: T[], seed: string) {
+  let state = stableHash(seed) || 1;
+  const shuffled = [...values];
+
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    const nextIndex = state % (index + 1);
+    [shuffled[index], shuffled[nextIndex]] = [shuffled[nextIndex], shuffled[index]];
+  }
+
+  return shuffled;
+}
+
 export function rotateCubeFace(face: CubeFace, turns = 1): CubeFace {
   let current = face;
   const totalTurns = ((turns % 4) + 4) % 4;
@@ -42,16 +55,14 @@ export function rotateCubeFace(face: CubeFace, turns = 1): CubeFace {
 }
 
 export function buildCubeTray(target: CubeFace[][], seed: string): CubePiece[] {
-  return target
+  const tray = target
     .flat()
     .map((face, index) => ({
       id: `${seed}-${index + 1}`,
       face,
-    }))
-    .sort(
-      (left, right) =>
-        stableHash(`${seed}:${left.id}`) - stableHash(`${seed}:${right.id}`),
-    );
+    }));
+
+  return seededShuffle(tray, seed);
 }
 
 export function isCubeBoardCorrect(

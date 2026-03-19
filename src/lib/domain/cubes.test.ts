@@ -32,6 +32,26 @@ describe("cubes domain", () => {
     expect(tray).toHaveLength(4);
   });
 
+  it("builds a deterministically shuffled tray order for the same session seed", () => {
+    const target: CubeFace[][] = [
+      ["diag-tl", "diag-tr"],
+      ["white", "red"],
+    ];
+
+    const first = buildCubeTray(target, "challenge-1");
+    const repeated = buildCubeTray(target, "challenge-1");
+
+    expect(first.map((piece) => piece.id)).toEqual([
+      "challenge-1-4",
+      "challenge-1-1",
+      "challenge-1-2",
+      "challenge-1-3",
+    ]);
+    expect(repeated.map((piece) => piece.id)).toEqual(
+      first.map((piece) => piece.id),
+    );
+  });
+
   it("validates the board only when every cell matches the expected face", () => {
     const target: CubeFace[][] = [
       ["diag-tl", "diag-tr"],
