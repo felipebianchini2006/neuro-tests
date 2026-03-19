@@ -154,7 +154,7 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
                 : snapshot.session.testType === "cubes-teen"
                   ? "Cubos (Adolescente)"
                   : snapshot.session.testType === "puzzle"
-                    ? "Quebra-Cabeça"
+                    ? "Armar Objetos"
                     : "Cubos"}
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--ink-soft)]">
@@ -234,7 +234,6 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
         <PuzzleSession
           key={`${snapshot.session.token}:${puzzleChallenge.id}`}
           challenge={puzzleChallenge}
-          currentIndex={currentIndex}
           currentRecord={currentRecord}
           busy={busy}
           onAnswer={submit}

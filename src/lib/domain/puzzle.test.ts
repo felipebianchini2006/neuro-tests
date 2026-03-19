@@ -8,7 +8,7 @@ describe("isPieceInPosition", () => {
     expect(
       isPieceInPosition(
         { cx: 50, cy: 50, rotation: 0 },
-        { targetCx: 50, targetCy: 50 },
+        { targetCx: 50, targetCy: 50, targetRotation: 0 },
         TOLERANCES,
       ),
     ).toBe(true);
@@ -18,7 +18,7 @@ describe("isPieceInPosition", () => {
     expect(
       isPieceInPosition(
         { cx: 55, cy: 55, rotation: 0 },
-        { targetCx: 50, targetCy: 50 },
+        { targetCx: 50, targetCy: 50, targetRotation: 0 },
         TOLERANCES,
       ),
     ).toBe(true); // dist ≈ 7.07, within 8
@@ -28,7 +28,7 @@ describe("isPieceInPosition", () => {
     expect(
       isPieceInPosition(
         { cx: 80, cy: 80, rotation: 0 },
-        { targetCx: 50, targetCy: 50 },
+        { targetCx: 50, targetCy: 50, targetRotation: 0 },
         TOLERANCES,
       ),
     ).toBe(false);
@@ -38,7 +38,7 @@ describe("isPieceInPosition", () => {
     expect(
       isPieceInPosition(
         { cx: 50, cy: 50, rotation: 30 },
-        { targetCx: 50, targetCy: 50 },
+        { targetCx: 50, targetCy: 50, targetRotation: 0 },
         TOLERANCES,
       ),
     ).toBe(true);
@@ -48,7 +48,7 @@ describe("isPieceInPosition", () => {
     expect(
       isPieceInPosition(
         { cx: 50, cy: 50, rotation: 50 },
-        { targetCx: 50, targetCy: 50 },
+        { targetCx: 50, targetCy: 50, targetRotation: 0 },
         TOLERANCES,
       ),
     ).toBe(false);
@@ -58,7 +58,7 @@ describe("isPieceInPosition", () => {
     expect(
       isPieceInPosition(
         { cx: 50, cy: 50, rotation: 360 },
-        { targetCx: 50, targetCy: 50 },
+        { targetCx: 50, targetCy: 50, targetRotation: 0 },
         TOLERANCES,
       ),
     ).toBe(true);
@@ -68,10 +68,28 @@ describe("isPieceInPosition", () => {
     expect(
       isPieceInPosition(
         { cx: 50, cy: 50, rotation: -10 },
-        { targetCx: 50, targetCy: 50 },
+        { targetCx: 50, targetCy: 50, targetRotation: 0 },
         TOLERANCES,
       ),
     ).toBe(true);
+  });
+
+  test("compares the placement against the target rotation", () => {
+    expect(
+      isPieceInPosition(
+        { cx: 50, cy: 50, rotation: 90 },
+        { targetCx: 50, targetCy: 50, targetRotation: 90 },
+        TOLERANCES,
+      ),
+    ).toBe(true);
+
+    expect(
+      isPieceInPosition(
+        { cx: 50, cy: 50, rotation: 10 },
+        { targetCx: 50, targetCy: 50, targetRotation: 90 },
+        TOLERANCES,
+      ),
+    ).toBe(false);
   });
 });
 
@@ -82,8 +100,8 @@ describe("isPuzzleComplete", () => {
       { cx: 70, cy: 70, rotation: -5 },
     ];
     const targets = [
-      { targetCx: 30, targetCy: 30 },
-      { targetCx: 70, targetCy: 70 },
+      { targetCx: 30, targetCy: 30, targetRotation: 0 },
+      { targetCx: 70, targetCy: 70, targetRotation: 0 },
     ];
     expect(isPuzzleComplete(placements, targets, TOLERANCES)).toBe(true);
   });
@@ -94,9 +112,22 @@ describe("isPuzzleComplete", () => {
       { cx: 90, cy: 90, rotation: 0 }, // wrong
     ];
     const targets = [
-      { targetCx: 30, targetCy: 30 },
-      { targetCx: 70, targetCy: 70 },
+      { targetCx: 30, targetCy: 30, targetRotation: 0 },
+      { targetCx: 70, targetCy: 70, targetRotation: 0 },
     ];
+    expect(isPuzzleComplete(placements, targets, TOLERANCES)).toBe(false);
+  });
+
+  test("fails when a piece rotation does not match its target rotation", () => {
+    const placements = [
+      { cx: 30, cy: 30, rotation: 0 },
+      { cx: 70, cy: 70, rotation: 0 },
+    ];
+    const targets = [
+      { targetCx: 30, targetCy: 30, targetRotation: 0 },
+      { targetCx: 70, targetCy: 70, targetRotation: 90 },
+    ];
+
     expect(isPuzzleComplete(placements, targets, TOLERANCES)).toBe(false);
   });
 

@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "sync:sequence-assets": "node ./scripts/sync-sequence-assets.mjs",
-    "sync:cube-assets": "node ./scripts/sync-cube-assets.mjs"
+    "sync:cube-assets": "node ./scripts/sync-cube-assets.mjs",
+    "sync:puzzle-assets": "node ./scripts/sync-puzzle-assets.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

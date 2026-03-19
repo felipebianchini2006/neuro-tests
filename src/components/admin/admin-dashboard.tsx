@@ -63,7 +63,7 @@ function buildSessionUrl(origin: string, kind: "p" | "o", token: string) {
 function getTestTypeLabel(testType: TestType) {
   if (testType === "sequence") return "Arranjo de Figuras";
   if (testType === "cubes-teen") return "Cubos (Adolescente)";
-  if (testType === "puzzle") return "Quebra-Cabeca";
+  if (testType === "puzzle") return "Armar Objetos";
   return "Cubos";
 }
 
@@ -519,7 +519,7 @@ export function AdminDashboard({
                     },
                     {
                       id: "puzzle" as const,
-                      label: "Quebra-Cabeca",
+                      label: "Armar Objetos",
                       icon: <Puzzle className="h-3.5 w-3.5" />,
                     },
                   ].map((option) => {

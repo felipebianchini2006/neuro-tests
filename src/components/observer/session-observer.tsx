@@ -72,6 +72,8 @@ export function SessionObserver({ initialSnapshot }: SessionObserverProps) {
             <p className="max-w-2xl text-sm leading-6 text-[color:var(--ink-soft)]">
               {snapshot.session.testType === "sequence"
                 ? "Arranjo de Figuras"
+                : snapshot.session.testType === "puzzle"
+                  ? "Armar Objetos"
                 : "Cubos"}{" "}
               • status {snapshot.session.status.replaceAll("_", " ")}
             </p>

@@ -4,17 +4,26 @@ import {
   contentCatalog,
   getCubeChallengeAt,
   getCubeChallengeTeenAt,
+  getItemTitle,
   getSequenceStoryAt,
   getTotalItems,
   validateSequenceAnswer,
   validateCubeTeenAnswer,
 } from "@/lib/content/catalog";
 import { generatedSequenceSources } from "@/lib/content/sequence-manifest.generated";
+import { generatedPuzzleSources } from "@/lib/content/puzzle-manifest.generated";
 
 describe("content catalog", () => {
   it("keeps the full sequence and cube challenge counts", () => {
     expect(contentCatalog.sequenceStories).toHaveLength(11);
     expect(contentCatalog.cubeChallenges).toHaveLength(9);
+  });
+
+  it("keeps the five Armar Objetos challenges wired into the catalog", () => {
+    expect(generatedPuzzleSources).toHaveLength(5);
+    expect(getTotalItems("puzzle")).toBe(5);
+    expect(getItemTitle("puzzle", 0)).toBe("Homem");
+    expect(getItemTitle("puzzle", 4)).toBe("Borboleta");
   });
 
   it("uses the real cube image assets for every challenge", () => {

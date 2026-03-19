@@ -244,7 +244,7 @@ describe("AdminDashboard", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("submits adolescent and puzzle test types with their internal ids", async () => {
+  it("submits adolescent and Armar Objetos test types with their internal ids", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce({
@@ -295,7 +295,7 @@ describe("AdminDashboard", () => {
     fireEvent.change(screen.getByPlaceholderText("Ex.: Paciente 08-03 / R.B."), {
       target: { value: "Paciente Puzzle" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Quebra-Cabeca/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Armar Objetos/i }));
     fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
 
     await waitFor(() => {

@@ -9,7 +9,6 @@ describe("PuzzleSession", () => {
     render(
       <PuzzleSession
         challenge={challenge}
-        currentIndex={4}
         onAnswer={vi.fn()}
       />,
     );
@@ -21,10 +20,31 @@ describe("PuzzleSession", () => {
     render(
       <PuzzleSession
         challenge={challenge}
-        currentIndex={0}
         onAnswer={vi.fn()}
       />,
     );
     expect(screen.getByRole("button", { name: /verificar/i })).toBeInTheDocument();
+  });
+
+  test("renders transparent piece images instead of recropping the full challenge sheet", () => {
+    const challenge = puzzleChallenges[0];
+    render(
+      <PuzzleSession
+        challenge={challenge}
+        onAnswer={vi.fn()}
+      />,
+    );
+
+    const pieceImages = screen.getAllByRole("presentation");
+    expect(pieceImages).toHaveLength(challenge.pieces.length);
+    expect(pieceImages[0]).toHaveAttribute(
+      "src",
+      expect.stringMatching(/\/assets\/puzzles\/generated\/puzzle-homem\/piece-1\.png$/),
+    );
+    expect(pieceImages).not.toContainEqual(
+      expect.objectContaining({
+        src: expect.stringContaining("/assets/puzzles/homem.jpg"),
+      }),
+    );
   });
 });

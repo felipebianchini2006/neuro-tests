@@ -1,21 +1,29 @@
 export type PuzzlePieceDefinition = {
   id: string;
-  /** SVG polygon points as "x,y x,y ..." where coordinates are % of assembled image dimensions */
-  clipPolygon: string;
+  pieceSrc: string;
+  sourceBox: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
   /** Center of piece in assembled image as % of canvas width */
   targetCx: number;
   /** Center of piece in assembled image as % of canvas height */
   targetCy: number;
-  /** Bounding box width as % of canvas width */
-  naturalW: number;
-  /** Bounding box height as % of canvas height */
-  naturalH: number;
+  /** Rotation required at the solved position */
+  targetRotation: number;
+  /** Rendered bounding box width as % of canvas width */
+  renderWidthPct: number;
+  /** Rendered bounding box height as % of canvas height */
+  renderHeightPct: number;
 };
 
 export type PuzzleChallenge = {
   id: string;
   title: string;
-  imageSrc: string;
+  sheetWidth: number;
+  sheetHeight: number;
   pieces: PuzzlePieceDefinition[];
 };
 
@@ -35,23 +43,24 @@ type Tolerances = {
 
 export function isPieceInPosition(
   placement: PiecePlacement,
-  target: Pick<PuzzlePieceDefinition, "targetCx" | "targetCy">,
+  target: Pick<PuzzlePieceDefinition, "targetCx" | "targetCy" | "targetRotation">,
   tolerances: Tolerances,
 ): boolean {
   const dx = placement.cx - target.targetCx;
   const dy = placement.cy - target.targetCy;
   const dist = Math.sqrt(dx * dx + dy * dy);
 
-  // Normalize rotation to [0, 360) then find shortest arc
-  const rotNorm = ((placement.rotation % 360) + 360) % 360;
-  const rotDiff = Math.min(rotNorm, 360 - rotNorm);
+  const placementRotation = ((placement.rotation % 360) + 360) % 360;
+  const targetRotation = ((target.targetRotation % 360) + 360) % 360;
+  const rawRotationDiff = Math.abs(placementRotation - targetRotation);
+  const rotDiff = Math.min(rawRotationDiff, 360 - rawRotationDiff);
 
   return dist <= tolerances.positionTolerance && rotDiff <= tolerances.rotationTolerance;
 }
 
 export function isPuzzleComplete(
   placements: PiecePlacement[],
-  targets: Pick<PuzzlePieceDefinition, "targetCx" | "targetCy">[],
+  targets: Pick<PuzzlePieceDefinition, "targetCx" | "targetCy" | "targetRotation">[],
   tolerances: Tolerances,
 ): boolean {
   return placements.every((p, i) => isPieceInPosition(p, targets[i], tolerances));

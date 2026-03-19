@@ -332,7 +332,7 @@ export function getItemTitle(testType: TestType, itemIndex: number) {
   }
 
   if (testType === "puzzle") {
-    return puzzleChallenges[itemIndex]?.title ?? `Quebra-Cabeça ${itemIndex + 1}`;
+    return puzzleChallenges[itemIndex]?.title ?? `Armar Objetos ${itemIndex + 1}`;
   }
 
   return getCubeChallengeAt(itemIndex)?.title ?? `Cubos ${itemIndex + 1}`;
