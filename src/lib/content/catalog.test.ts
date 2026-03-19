@@ -6,6 +6,7 @@ import {
   getCubeChallengeTeenAt,
   getSequenceStoryAt,
   getTotalItems,
+  validateSequenceAnswer,
   validateCubeTeenAnswer,
 } from "@/lib/content/catalog";
 import { generatedSequenceSources } from "@/lib/content/sequence-manifest.generated";
@@ -128,11 +129,40 @@ describe("content catalog", () => {
       "5 - HUNT": ["4", "3", "2", "5"],
       "6 - DREAMS": ["2D", "4R", "3E", "1A", "5M"],
       "7 - CLEAM": ["3", "5", "4", "2", "1"],
-      "8 - CHOIR": ["2", "1", "3", "4", "5"],
+      "8 - CHOIR": ["4", "3", "1", "5", "2"],
       "9 - LUNCH": ["2", "5", "1", "4", "3"],
       "10 - SHARK": ["5", "1", "3", "2", "4"],
       "11 - SAMUEL": ["5", "4", "3", "1", "2", "6"],
     });
+  });
+
+  it("accepts the guide-image order for CHOIR", () => {
+    const story = getSequenceStoryAt(7);
+
+    expect(story).not.toBeNull();
+    expect(validateSequenceAnswer(7, story!.correctOrder)).toBe(true);
+    expect(story!.frames.map((frame) => frame.label)).toEqual([
+      "4",
+      "3",
+      "1",
+      "5",
+      "2",
+    ]);
+  });
+
+  it("accepts both clinically valid HUNT orderings", () => {
+    const story = getSequenceStoryAt(4);
+
+    expect(story).not.toBeNull();
+    expect(validateSequenceAnswer(4, story!.correctOrder)).toBe(true);
+    expect(
+      validateSequenceAnswer(4, [
+        "5-hunt-4-jpg",
+        "5-hunt-3-jpg",
+        "5-hunt-5-png",
+        "5-hunt-2-jpg",
+      ]),
+    ).toBe(true);
   });
 });
 

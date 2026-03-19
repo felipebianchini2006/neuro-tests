@@ -84,11 +84,11 @@ export const generatedSequenceSources = [
     "title": "8 - CHOIR",
     "guideSource": "/assets/sequence/8%20-%20CHOIR/CHOIR.jpg",
     "frameSources": [
-      "/assets/sequence/8%20-%20CHOIR/2.jpg",
-      "/assets/sequence/8%20-%20CHOIR/1.jpg",
-      "/assets/sequence/8%20-%20CHOIR/3.jpg",
       "/assets/sequence/8%20-%20CHOIR/4.jpg",
-      "/assets/sequence/8%20-%20CHOIR/5.jpg"
+      "/assets/sequence/8%20-%20CHOIR/3.jpg",
+      "/assets/sequence/8%20-%20CHOIR/1.jpg",
+      "/assets/sequence/8%20-%20CHOIR/5.jpg",
+      "/assets/sequence/8%20-%20CHOIR/2.jpg"
     ]
   },
   {
