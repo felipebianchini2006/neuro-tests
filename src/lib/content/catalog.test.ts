@@ -58,7 +58,7 @@ describe("content catalog", () => {
         ["red", "red"],
       ],
       [
-        ["white", "diag-bl"],
+        ["white", "diag-tl"],
         ["diag-tr", "white"],
       ],
       [
