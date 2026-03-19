@@ -43,6 +43,20 @@ if (chaseStory) {
   ];
 }
 
+// HUNT has two clinically valid orderings ("duas opções" from client reference).
+// Primary order (4-3-2-5) is set via manifest; the alternative (4-3-5-2) is patched here.
+const huntStory = sequenceStories.find((s) => s.id === "5-hunt");
+if (huntStory) {
+  huntStory.alternativeOrders = [
+    [
+      "5-hunt-4-jpg",
+      "5-hunt-3-jpg",
+      "5-hunt-5-png",
+      "5-hunt-2-jpg",
+    ],
+  ];
+}
+
 const cubeChallenges: CubeChallenge[] = [
   {
     id: "cubes-01",
@@ -134,9 +148,9 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 3,
     imageSrc: "/assets/cubes/9.jpg",
     target: [
-      ["red", "red", "diag-tl"],
-      ["red", "white", "diag-tl"],
-      ["diag-tr", "white", "red"],
+      ["diag-br", "red", "diag-bl"],
+      ["red", "white", "red"],
+      ["diag-tr", "red", "diag-tl"],
     ],
   },
 ];

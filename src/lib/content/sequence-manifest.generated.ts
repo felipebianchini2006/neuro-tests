@@ -96,10 +96,10 @@ export const generatedSequenceSources = [
     "title": "9 - LUNCH",
     "guideSource": "/assets/sequence/9%20-%20LUNCH/LUNCH.jpg",
     "frameSources": [
+      "/assets/sequence/9%20-%20LUNCH/2.jpg",
       "/assets/sequence/9%20-%20LUNCH/5.jpg",
       "/assets/sequence/9%20-%20LUNCH/1.jpg",
       "/assets/sequence/9%20-%20LUNCH/4.jpg",
-      "/assets/sequence/9%20-%20LUNCH/2.jpg",
       "/assets/sequence/9%20-%20LUNCH/3.jpg"
     ]
   },
@@ -108,11 +108,11 @@ export const generatedSequenceSources = [
     "title": "10 - SHARK",
     "guideSource": "/assets/sequence/10%20-%20SHARK/SHARK.jpg",
     "frameSources": [
-      "/assets/sequence/10%20-%20SHARK/3.jpg",
+      "/assets/sequence/10%20-%20SHARK/5.jpg",
       "/assets/sequence/10%20-%20SHARK/1.jpg",
+      "/assets/sequence/10%20-%20SHARK/3.jpg",
       "/assets/sequence/10%20-%20SHARK/2.jpg",
-      "/assets/sequence/10%20-%20SHARK/4.jpg",
-      "/assets/sequence/10%20-%20SHARK/5.jpg"
+      "/assets/sequence/10%20-%20SHARK/4.jpg"
     ]
   },
   {
@@ -122,8 +122,8 @@ export const generatedSequenceSources = [
     "frameSources": [
       "/assets/sequence/11%20-%20SAMUEL/5.jpg",
       "/assets/sequence/11%20-%20SAMUEL/4.jpg",
-      "/assets/sequence/11%20-%20SAMUEL/1.jpg",
       "/assets/sequence/11%20-%20SAMUEL/3.jpg",
+      "/assets/sequence/11%20-%20SAMUEL/1.jpg",
       "/assets/sequence/11%20-%20SAMUEL/2.jpg",
       "/assets/sequence/11%20-%20SAMUEL/6.jpg"
     ]

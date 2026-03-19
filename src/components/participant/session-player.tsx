@@ -63,6 +63,9 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
     ).then(async (response) => {
       setPlayerState(response);
       await broadcastSessionSnapshot(channel, response.snapshot);
+    }).catch((err) => {
+      console.error("Failed to start item:", err);
+      setError(err instanceof Error ? err.message : "Erro ao carregar item");
     });
   }, [currentIndex, snapshot.session.status, snapshot.session.token]);
 

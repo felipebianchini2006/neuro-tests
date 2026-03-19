@@ -80,9 +80,9 @@ describe("content catalog", () => {
         ["diag-tr", "white", "diag-br"],
       ],
       [
-        ["red", "red", "diag-tl"],
-        ["red", "white", "diag-tl"],
-        ["diag-tr", "white", "red"],
+        ["diag-br", "red", "diag-bl"],
+        ["red", "white", "red"],
+        ["diag-tr", "red", "diag-tl"],
       ],
     ]);
   });
@@ -129,9 +129,9 @@ describe("content catalog", () => {
       "6 - DREAMS": ["2D", "4R", "3E", "1A", "5M"],
       "7 - CLEAM": ["3", "5", "4", "2", "1"],
       "8 - CHOIR": ["2", "1", "3", "4", "5"],
-      "9 - LUNCH": ["5", "1", "4", "2", "3"],
-      "10 - SHARK": ["3", "1", "2", "4", "5"],
-      "11 - SAMUEL": ["5", "4", "1", "3", "2", "6"],
+      "9 - LUNCH": ["2", "5", "1", "4", "3"],
+      "10 - SHARK": ["5", "1", "3", "2", "4"],
+      "11 - SAMUEL": ["5", "4", "3", "1", "2", "6"],
     });
   });
 });
