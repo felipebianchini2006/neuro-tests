@@ -208,6 +208,31 @@ describe("AdminDashboard", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows a friendly error when session creation returns an empty response body", async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      json: async () => {
+        throw new SyntaxError("Unexpected end of JSON input");
+      },
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    render(<AdminDashboard persistentStoreEnabled initialSessions={[]} />);
+
+    fireEvent.change(screen.getByPlaceholderText("Ex.: Paciente 08-03 / R.B."), {
+      target: { value: "Rangel" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Nao foi possivel criar a sessao.")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText("Unexpected end of JSON input")).not.toBeInTheDocument();
+  });
+
   it("keeps the compact creation area labels visible", () => {
     render(
       <AdminDashboard

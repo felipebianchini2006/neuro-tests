@@ -3,6 +3,8 @@
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 
+import { readJsonResponse } from "@/lib/client/read-json-response";
+
 export function AdminLoginForm() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -20,9 +22,9 @@ export function AdminLoginForm() {
         body: JSON.stringify({ password }),
       });
 
-      const data = (await response.json()) as { error?: string };
+      const data = await readJsonResponse<{ error?: string }>(response);
       if (!response.ok) {
-        throw new Error(data.error ?? "Falha no login.");
+        throw new Error(data?.error ?? "Falha no login.");
       }
 
       window.location.reload();

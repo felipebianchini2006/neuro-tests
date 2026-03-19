@@ -34,6 +34,7 @@ import {
   broadcastSessionSnapshot,
   createSessionChannel,
 } from "@/lib/client/session-channel";
+import { readJsonResponse } from "@/lib/client/read-json-response";
 import type {
   SessionRecord,
   SessionSnapshot,
@@ -274,9 +275,11 @@ export function AdminDashboard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ participantCode, testType }),
       });
-      const data = (await response.json()) as { error?: string; snapshot?: SessionSnapshot };
-      if (!response.ok || !data.snapshot) {
-        throw new Error(data.error ?? "Nao foi possivel criar a sessao.");
+      const data = await readJsonResponse<{ error?: string; snapshot?: SessionSnapshot }>(
+        response,
+      );
+      if (!response.ok || !data?.snapshot) {
+        throw new Error(data?.error ?? "Nao foi possivel criar a sessao.");
       }
 
       const snapshot = data.snapshot;
@@ -307,9 +310,11 @@ export function AdminDashboard({
       const response = await fetch(`/api/admin/sessions/${token}/complete`, {
         method: "POST",
       });
-      const data = (await response.json()) as { error?: string; snapshot?: SessionSnapshot };
-      if (!response.ok || !data.snapshot) {
-        throw new Error(data.error ?? "Nao foi possivel encerrar a sessao.");
+      const data = await readJsonResponse<{ error?: string; snapshot?: SessionSnapshot }>(
+        response,
+      );
+      if (!response.ok || !data?.snapshot) {
+        throw new Error(data?.error ?? "Nao foi possivel encerrar a sessao.");
       }
 
       const snapshot = data.snapshot;
@@ -340,9 +345,11 @@ export function AdminDashboard({
       const response = await fetch("/api/admin/sessions/completed", {
         method: "DELETE",
       });
-      const data = (await response.json()) as { deletedCount?: number; error?: string };
-      if (!response.ok || typeof data.deletedCount !== "number") {
-        throw new Error(data.error ?? "Nao foi possivel limpar o historico.");
+      const data = await readJsonResponse<{ deletedCount?: number; error?: string }>(
+        response,
+      );
+      if (!response.ok || typeof data?.deletedCount !== "number") {
+        throw new Error(data?.error ?? "Nao foi possivel limpar o historico.");
       }
 
       setSessions((current) =>
