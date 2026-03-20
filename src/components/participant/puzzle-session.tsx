@@ -5,6 +5,7 @@ import { useCallback, useRef, useState } from "react";
 
 import { RotateCw } from "lucide-react";
 
+import { buildInitialPuzzlePlacements } from "@/lib/domain/puzzle-layout";
 import type { PuzzleChallenge, PiecePlacement } from "@/lib/domain/puzzle";
 import type { SessionItemRecord } from "@/lib/server/session-repository";
 
@@ -16,16 +17,6 @@ type PuzzleSessionProps = {
   onAdvance?: () => Promise<void>;
 };
 
-function initialPlacements(challenge: PuzzleChallenge): PiecePlacement[] {
-  return challenge.pieces.map((piece) => ({
-    cx:
-      ((piece.sourceBox.x + piece.sourceBox.width / 2) / challenge.sheetWidth) * 100,
-    cy:
-      ((piece.sourceBox.y + piece.sourceBox.height / 2) / challenge.sheetHeight) * 100,
-    rotation: 0,
-  }));
-}
-
 export function PuzzleSession({
   challenge,
   currentRecord,
@@ -34,7 +25,7 @@ export function PuzzleSession({
   onAdvance,
 }: PuzzleSessionProps) {
   const [placements, setPlacements] = useState<PiecePlacement[]>(() =>
-    initialPlacements(challenge),
+    buildInitialPuzzlePlacements(challenge),
   );
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
 

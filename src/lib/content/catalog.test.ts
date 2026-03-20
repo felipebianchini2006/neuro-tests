@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   contentCatalog,
+  getAdultBatteryItemAt,
   getCubeChallengeAt,
   getCubeChallengeTeenAt,
   getItemTitle,
@@ -24,6 +25,44 @@ describe("content catalog", () => {
     expect(getTotalItems("puzzle")).toBe(5);
     expect(getItemTitle("puzzle", 0)).toBe("Homem");
     expect(getItemTitle("puzzle", 4)).toBe("Borboleta");
+  });
+
+  it("exposes the adult battery as the combined adult item count", () => {
+    expect(getTotalItems("adult-battery")).toBe(25);
+  });
+
+  it("maps adult battery indexes across sequence, cubes, and puzzle sections", () => {
+    expect(getAdultBatteryItemAt(0)).toEqual({
+      section: "sequence",
+      localIndex: 0,
+    });
+    expect(getAdultBatteryItemAt(10)).toEqual({
+      section: "sequence",
+      localIndex: 10,
+    });
+    expect(getAdultBatteryItemAt(11)).toEqual({
+      section: "cubes",
+      localIndex: 0,
+    });
+    expect(getAdultBatteryItemAt(19)).toEqual({
+      section: "cubes",
+      localIndex: 8,
+    });
+    expect(getAdultBatteryItemAt(20)).toEqual({
+      section: "puzzle",
+      localIndex: 0,
+    });
+    expect(getAdultBatteryItemAt(24)).toEqual({
+      section: "puzzle",
+      localIndex: 4,
+    });
+    expect(getAdultBatteryItemAt(25)).toBeNull();
+  });
+
+  it("returns section-aware titles for the adult battery", () => {
+    expect(getItemTitle("adult-battery", 0)).toBe("1 - CAP");
+    expect(getItemTitle("adult-battery", 11)).toBe("Cubos 1");
+    expect(getItemTitle("adult-battery", 20)).toBe("Homem");
   });
 
   it("uses the real cube image assets for every challenge", () => {

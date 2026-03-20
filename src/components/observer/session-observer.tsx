@@ -22,6 +22,14 @@ type SessionObserverProps = {
 
 export function SessionObserver({ initialSnapshot }: SessionObserverProps) {
   const [snapshot, setSnapshot] = useState(initialSnapshot);
+  const sessionLabel =
+    snapshot.session.testType === "sequence"
+      ? "Arranjo de Figuras"
+      : snapshot.session.testType === "adult-battery"
+        ? "Bateria Adulta"
+        : snapshot.session.testType === "puzzle"
+          ? "Armar Objetos"
+          : "Cubos";
 
   const refreshSnapshot = useEffectEvent(async () => {
     const nextSnapshot = await getSessionSnapshot(snapshot.session.token);
@@ -70,12 +78,7 @@ export function SessionObserver({ initialSnapshot }: SessionObserverProps) {
               {snapshot.session.participantCode}
             </h1>
             <p className="max-w-2xl text-sm leading-6 text-[color:var(--ink-soft)]">
-              {snapshot.session.testType === "sequence"
-                ? "Arranjo de Figuras"
-                : snapshot.session.testType === "puzzle"
-                  ? "Armar Objetos"
-                : "Cubos"}{" "}
-              • status {snapshot.session.status.replaceAll("_", " ")}
+              {sessionLabel} • status {snapshot.session.status.replaceAll("_", " ")}
             </p>
           </div>
 

@@ -62,6 +62,7 @@ function buildSessionUrl(origin: string, kind: "p" | "o", token: string) {
 
 function getTestTypeLabel(testType: TestType) {
   if (testType === "sequence") return "Arranjo de Figuras";
+  if (testType === "adult-battery") return "Bateria Adulta";
   if (testType === "cubes-teen") return "Cubos (Adolescente)";
   if (testType === "puzzle") return "Armar Objetos";
   return "Cubos";
@@ -513,6 +514,11 @@ export function AdminDashboard({
                       icon: <Boxes className="h-3.5 w-3.5" />,
                     },
                     {
+                      id: "adult-battery" as const,
+                      label: "Bateria Adulta",
+                      icon: <Target className="h-3.5 w-3.5" />,
+                    },
+                    {
                       id: "cubes-teen" as const,
                       label: "Adolescente",
                       icon: <Boxes className="h-3.5 w-3.5" />,
@@ -649,6 +655,8 @@ export function AdminDashboard({
                           <div className="flex min-w-0 items-center gap-2">
                             {session.testType === "sequence" ? (
                               <LayoutGrid className="h-3.5 w-3.5 shrink-0 text-[color:var(--accent)]" />
+                            ) : session.testType === "adult-battery" ? (
+                              <Target className="h-3.5 w-3.5 shrink-0 text-[color:var(--accent)]" />
                             ) : session.testType === "cubes" || session.testType === "cubes-teen" ? (
                               <Boxes className="h-3.5 w-3.5 shrink-0 text-[color:var(--accent)]" />
                             ) : session.testType === "puzzle" ? (

@@ -1,4 +1,5 @@
 import {
+  getAdultBatteryItemAt,
   getCubeChallengeAt,
   getCubeChallengeTeenAt,
   getCubeTrayForSession,
@@ -78,6 +79,54 @@ export function buildParticipantSessionState(
 
   if (snapshot.session.testType === "puzzle") {
     const challenge = getPuzzleChallengeAt(currentIndex);
+
+    return {
+      snapshot,
+      currentItem: challenge ? { kind: "puzzle", challenge } : null,
+    };
+  }
+
+  if (snapshot.session.testType === "adult-battery") {
+    const item = getAdultBatteryItemAt(currentIndex);
+
+    if (!item) {
+      return { snapshot, currentItem: null };
+    }
+
+    if (item.section === "sequence") {
+      const story = getSequenceStoryAt(item.localIndex);
+
+      return {
+        snapshot,
+        currentItem: story
+          ? {
+              kind: "sequence",
+              story,
+              promptFrameIds: getPromptSequenceFrames(
+                story,
+                snapshot.session.token,
+              ).map((frame) => frame.id),
+            }
+          : null,
+      };
+    }
+
+    if (item.section === "cubes") {
+      const challenge = getCubeChallengeAt(item.localIndex);
+
+      return {
+        snapshot,
+        currentItem: challenge
+          ? {
+              kind: "cubes",
+              challenge,
+              initialTray: getCubeTrayForSession(challenge, snapshot.session.token),
+            }
+          : null,
+      };
+    }
+
+    const challenge = getPuzzleChallengeAt(item.localIndex);
 
     return {
       snapshot,

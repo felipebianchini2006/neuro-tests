@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import {
+  getAdultBatteryItemAt,
   validateCubeAnswer,
   validateCubeTeenAnswer,
   validateSequenceAnswer,
@@ -51,6 +52,36 @@ export async function POST(
                 ? (body.answerPayload as PiecePlacement[])
                 : [],
             )
+          : existing.session.testType === "adult-battery"
+            ? (() => {
+                const item = getAdultBatteryItemAt(body.itemIndex);
+                if (!item) return false;
+
+                if (item.section === "sequence") {
+                  return validateSequenceAnswer(
+                    item.localIndex,
+                    Array.isArray(body.answerPayload)
+                      ? (body.answerPayload as string[])
+                      : [],
+                  );
+                }
+
+                if (item.section === "cubes") {
+                  return validateCubeAnswer(
+                    item.localIndex,
+                    Array.isArray(body.answerPayload)
+                      ? (body.answerPayload as (import("@/lib/domain/cubes").CubeFace | null)[][])
+                      : [],
+                  );
+                }
+
+                return validatePuzzleAnswer(
+                  item.localIndex,
+                  Array.isArray(body.answerPayload)
+                    ? (body.answerPayload as PiecePlacement[])
+                    : [],
+                );
+              })()
           : validateCubeAnswer(
               body.itemIndex,
               Array.isArray(body.answerPayload)

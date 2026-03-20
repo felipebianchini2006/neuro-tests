@@ -38,6 +38,17 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
   const cubeChallenge = currentItem?.kind === "cubes" ? currentItem.challenge : null;
   const puzzleChallenge = currentItem?.kind === "puzzle" ? currentItem.challenge : null;
 
+  const sessionTitle =
+    snapshot.session.testType === "sequence"
+      ? "Arranjo de Figuras"
+      : snapshot.session.testType === "adult-battery"
+        ? "Bateria Adulta"
+        : snapshot.session.testType === "cubes-teen"
+          ? "Cubos (Adolescente)"
+          : snapshot.session.testType === "puzzle"
+            ? "Armar Objetos"
+            : "Cubos";
+
   useEffect(() => {
     const channel = createSessionChannel(snapshot.session.token);
     if (!channel || snapshot.session.status === "completed") {
@@ -148,15 +159,7 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
             <p className="text-sm uppercase tracking-[0.25em] text-[color:var(--muted)]">
               Aplicação em andamento
             </p>
-            <h1 className="mt-2 text-3xl font-semibold text-[color:var(--ink)]">
-              {snapshot.session.testType === "sequence"
-                ? "Arranjo de Figuras"
-                : snapshot.session.testType === "cubes-teen"
-                  ? "Cubos (Adolescente)"
-                  : snapshot.session.testType === "puzzle"
-                    ? "Armar Objetos"
-                    : "Cubos"}
-            </h1>
+            <h1 className="mt-2 text-3xl font-semibold text-[color:var(--ink)]">{sessionTitle}</h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-[color:var(--ink-soft)]">
               Item {Math.min(currentIndex + 1, snapshot.session.totalItems)} de{" "}
               {snapshot.session.totalItems}:{" "}
@@ -200,7 +203,7 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
         </div>
       ) : null}
 
-      {snapshot.session.testType === "sequence" && sequenceStory ? (
+      {currentItem?.kind === "sequence" && sequenceStory ? (
         <SequenceSession
           key={`${snapshot.session.token}:${sequenceStory.id}`}
           story={sequenceStory}
@@ -214,9 +217,7 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
         />
       ) : null}
 
-      {(snapshot.session.testType === "cubes" ||
-        snapshot.session.testType === "cubes-teen") &&
-      cubeChallenge ? (
+      {currentItem?.kind === "cubes" && cubeChallenge ? (
         <CubesSession
           key={`${snapshot.session.token}:${cubeChallenge.id}`}
           challenge={cubeChallenge}
@@ -230,7 +231,7 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
         />
       ) : null}
 
-      {snapshot.session.testType === "puzzle" && puzzleChallenge ? (
+      {currentItem?.kind === "puzzle" && puzzleChallenge ? (
         <PuzzleSession
           key={`${snapshot.session.token}:${puzzleChallenge.id}`}
           challenge={puzzleChallenge}
