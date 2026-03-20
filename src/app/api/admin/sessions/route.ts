@@ -9,7 +9,7 @@ function getCreateSessionErrorMessage(error: unknown) {
     error instanceof Error &&
     error.message.includes("sessions_test_type_check")
   ) {
-    return "Tipo de teste nao suportado pelo banco configurado. Aplique a migration 002_add_test_types.sql.";
+    return "Tipo de teste nao suportado pelo banco configurado. Aplique a migration mais recente de test types.";
   }
 
   return "Nao foi possivel criar a sessao.";

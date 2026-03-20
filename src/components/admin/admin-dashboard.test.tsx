@@ -244,9 +244,30 @@ describe("AdminDashboard", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("submits adolescent and Armar Objetos test types with their internal ids", async () => {
+  it("shows the adult battery option with an explicit label", () => {
+    render(<AdminDashboard persistentStoreEnabled initialSessions={[]} />);
+
+    expect(
+      screen.getByRole("button", { name: /Bateria Adulta/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("submits adult battery, adolescent, and Armar Objetos test types with their internal ids", async () => {
     const fetchMock = vi
       .fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          snapshot: {
+            session: {
+              ...buildSessionRecord("Paciente Adulto", "token-adult"),
+              testType: "adult-battery",
+              totalItems: 25,
+            },
+            items: [],
+          },
+        }),
+      })
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -271,9 +292,9 @@ describe("AdminDashboard", () => {
     render(<AdminDashboard persistentStoreEnabled initialSessions={[]} />);
 
     fireEvent.change(screen.getByPlaceholderText("Ex.: Paciente 08-03 / R.B."), {
-      target: { value: "Paciente Teen" },
+      target: { value: "Paciente Adulto" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Adolescente/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Bateria Adulta/i }));
     fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
 
     await waitFor(() => {
@@ -282,6 +303,28 @@ describe("AdminDashboard", () => {
 
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
+      "/api/admin/sessions",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          participantCode: "Paciente Adulto",
+          testType: "adult-battery",
+        }),
+      }),
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("Ex.: Paciente 08-03 / R.B."), {
+      target: { value: "Paciente Teen" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Adolescente/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    expect(fetchMock).toHaveBeenNthCalledWith(
+      2,
       "/api/admin/sessions",
       expect.objectContaining({
         method: "POST",
@@ -299,11 +342,11 @@ describe("AdminDashboard", () => {
     fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
 
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock).toHaveBeenCalledTimes(3);
     });
 
     expect(fetchMock).toHaveBeenNthCalledWith(
-      2,
+      3,
       "/api/admin/sessions",
       expect.objectContaining({
         method: "POST",

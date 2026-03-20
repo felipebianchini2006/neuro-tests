@@ -2,7 +2,7 @@ create table if not exists public.sessions (
   id uuid primary key default gen_random_uuid(),
   token text not null unique,
   participant_code text not null,
-  test_type text not null check (test_type in ('sequence', 'cubes', 'cubes-teen', 'puzzle')),
+  test_type text not null check (test_type in ('sequence', 'cubes', 'cubes-teen', 'puzzle', 'adult-battery')),
   status text not null default 'pending' check (status in ('pending', 'in_progress', 'completed')),
   current_item_index integer not null default 0,
   total_items integer not null,
