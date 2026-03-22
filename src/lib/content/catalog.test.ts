@@ -161,6 +161,24 @@ describe("content catalog", () => {
     ]);
   });
 
+  it("keeps the corrected explicit frame order for LUNCH and SHARK", () => {
+    expect(generatedSequenceSources[8].frameSources).toEqual([
+      "/assets/sequence/9%20-%20LUNCH/2.jpg",
+      "/assets/sequence/9%20-%20LUNCH/4.jpg",
+      "/assets/sequence/9%20-%20LUNCH/1.jpg",
+      "/assets/sequence/9%20-%20LUNCH/5.jpg",
+      "/assets/sequence/9%20-%20LUNCH/3.jpg",
+    ]);
+
+    expect(generatedSequenceSources[9].frameSources).toEqual([
+      "/assets/sequence/10%20-%20SHARK/3.jpg",
+      "/assets/sequence/10%20-%20SHARK/1.jpg",
+      "/assets/sequence/10%20-%20SHARK/5.jpg",
+      "/assets/sequence/10%20-%20SHARK/2.jpg",
+      "/assets/sequence/10%20-%20SHARK/4.jpg",
+    ]);
+  });
+
   it("keeps every sequence story in the same order shown by its guide image", () => {
     const storyOrders = Object.fromEntries(
       contentCatalog.sequenceStories.map((story) => [
@@ -178,8 +196,8 @@ describe("content catalog", () => {
       "6 - DREAMS": ["2D", "4R", "3E", "1A", "5M"],
       "7 - CLEAM": ["3", "5", "4", "2", "1"],
       "8 - CHOIR": ["4", "3", "1", "5", "2"],
-      "9 - LUNCH": ["2", "5", "1", "4", "3"],
-      "10 - SHARK": ["5", "1", "3", "2", "4"],
+      "9 - LUNCH": ["2", "4", "1", "5", "3"],
+      "10 - SHARK": ["3", "1", "5", "2", "4"],
       "11 - SAMUEL": ["5", "4", "3", "1", "2", "6"],
     });
   });

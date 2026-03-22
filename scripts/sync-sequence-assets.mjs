@@ -25,8 +25,8 @@ const explicitStoryFrameFiles = {
   "6 - DREAMS": ["2D.jpg", "4R.jpg", "3E.jpg", "1A.jpg", "5M.jpg"],
   "7 - CLEAM": ["3.jpg", "5.jpg", "4.jpg", "2.jpg", "1.jpg"],
   "8 - CHOIR": ["4.jpg", "3.jpg", "1.jpg", "5.jpg", "2.jpg"],
-  "9 - LUNCH": ["2.jpg", "5.jpg", "1.jpg", "4.jpg", "3.jpg"],
-  "10 - SHARK": ["5.jpg", "1.jpg", "3.jpg", "2.jpg", "4.jpg"],
+  "9 - LUNCH": ["2.jpg", "4.jpg", "1.jpg", "5.jpg", "3.jpg"],
+  "10 - SHARK": ["3.jpg", "1.jpg", "5.jpg", "2.jpg", "4.jpg"],
   "11 - SAMUEL": ["5.jpg", "4.jpg", "3.jpg", "1.jpg", "2.jpg", "6.jpg"],
 };
 
