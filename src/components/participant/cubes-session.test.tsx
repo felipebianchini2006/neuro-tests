@@ -55,6 +55,23 @@ describe("CubesSession", () => {
     expect(screen.getAllByTestId("cube-guide-cell")).toHaveLength(4);
   });
 
+  it("shows the original reference image alongside the aligned guide", () => {
+    render(
+      <CubesSession
+        challenge={challenge}
+        initialTray={initialTray}
+        busy={false}
+        onSubmit={async () => {}}
+        onAdvance={async () => {}}
+      />,
+    );
+
+    expect(screen.getByAltText("Cubos 1 modelo")).toHaveAttribute(
+      "src",
+      "/assets/cubes/1.jpg",
+    );
+  });
+
   it("makes the white face visually distinct from an empty cell", () => {
     const whiteChallenge: CubeChallenge = {
       ...challenge,

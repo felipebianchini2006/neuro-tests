@@ -97,15 +97,15 @@ describe("content catalog", () => {
         ["red", "red"],
       ],
       [
-        ["white", "diag-tl"],
-        ["diag-tr", "white"],
+        ["white", "diag-tr"],
+        ["diag-bl", "white"],
       ],
       [
         ["diag-br", "red"],
         ["red", "diag-tl"],
       ],
       [
-        ["diag-tl", "diag-tr"],
+        ["diag-bl", "diag-br"],
         ["diag-tr", "diag-tl"],
       ],
       [
