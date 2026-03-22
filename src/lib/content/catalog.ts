@@ -206,7 +206,7 @@ const cubeChallengesTeen: CubeChallenge[] = [
     title: "Cubos A6",
     gridSize: 2,
     imageSrc: "/assets/cubes-teen/8.jpg",
-    target: [["red", "diag-bl"], ["diag-tr", "red"]],
+    target: [["red", "red"], ["diag-tl", "diag-tr"]],
   },
   {
     id: "cubes-teen-07",
@@ -250,9 +250,9 @@ const cubeChallengesTeen: CubeChallenge[] = [
     gridSize: 3,
     imageSrc: "/assets/cubes-teen/13.jpg",
     target: [
-      ["white", "red", "white"],
-      ["white", "red", "white"],
-      ["white", "diag-tl", "white"],
+      ["diag-br", "diag-bl", "diag-bl"],
+      ["diag-br", "red", "diag-tl"],
+      ["diag-tr", "diag-tr", "diag-tl"],
     ],
   },
   {

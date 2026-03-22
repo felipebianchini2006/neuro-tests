@@ -262,7 +262,7 @@ describe("cubes-teen catalog", () => {
     {
       imageSrc: "/assets/cubes-teen/8.jpg",
       gridSize: 2,
-      target: [["red", "diag-bl"], ["diag-tr", "red"]],
+      target: [["red", "red"], ["diag-tl", "diag-tr"]],
     },
     {
       imageSrc: "/assets/cubes-teen/9.jpg",
@@ -296,9 +296,9 @@ describe("cubes-teen catalog", () => {
       imageSrc: "/assets/cubes-teen/13.jpg",
       gridSize: 3,
       target: [
-        ["white", "red", "white"],
-        ["white", "red", "white"],
-        ["white", "diag-tl", "white"],
+        ["diag-br", "diag-bl", "diag-bl"],
+        ["diag-br", "red", "diag-tl"],
+        ["diag-tr", "diag-tr", "diag-tl"],
       ],
     },
     {
@@ -342,10 +342,18 @@ describe("cubes-teen catalog", () => {
     ]);
   });
 
-  it("keeps the corrected 8.jpg diagonal orientation", () => {
+  it("keeps the corrected A6 composition", () => {
     expect(getCubeChallengeTeenAt(5)?.target).toEqual([
-      ["red", "diag-bl"],
-      ["diag-tr", "red"],
+      ["red", "red"],
+      ["diag-tl", "diag-tr"],
+    ]);
+  });
+
+  it("keeps the corrected A11 pinwheel composition", () => {
+    expect(getCubeChallengeTeenAt(10)?.target).toEqual([
+      ["diag-br", "diag-bl", "diag-bl"],
+      ["diag-br", "red", "diag-tl"],
+      ["diag-tr", "diag-tr", "diag-tl"],
     ]);
   });
 
