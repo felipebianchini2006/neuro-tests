@@ -84,8 +84,8 @@ const cubeChallenges: CubeChallenge[] = [
     gridSize: 2,
     imageSrc: "/assets/cubes/2.jpg",
     target: [
-      ["white", "diag-tr"],
-      ["diag-bl", "white"],
+      ["white", "diag-bl"],
+      ["diag-tr", "white"],
     ],
   },
   {

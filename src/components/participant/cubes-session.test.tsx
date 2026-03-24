@@ -55,7 +55,7 @@ describe("CubesSession", () => {
     expect(screen.getAllByTestId("cube-guide-cell")).toHaveLength(4);
   });
 
-  it("shows the original reference image alongside the aligned guide", () => {
+  it("keeps only the aligned target guide visible", () => {
     render(
       <CubesSession
         challenge={challenge}
@@ -66,10 +66,8 @@ describe("CubesSession", () => {
       />,
     );
 
-    expect(screen.getByAltText("Cubos 1 modelo")).toHaveAttribute(
-      "src",
-      "/assets/cubes/1.jpg",
-    );
+    expect(screen.queryByText("Referência original")).not.toBeInTheDocument();
+    expect(screen.queryByAltText("Cubos 1 modelo")).not.toBeInTheDocument();
   });
 
   it("makes the white face visually distinct from an empty cell", () => {

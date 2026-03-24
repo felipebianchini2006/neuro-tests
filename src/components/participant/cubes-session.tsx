@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 
 import { RotateCw, Undo2 } from "lucide-react";
-import Image from "next/image";
 
 import { CubeFacePreview } from "@/components/shared/cube-face";
 import type { CubeChallenge } from "@/lib/content/catalog";
@@ -111,41 +110,23 @@ export function CubesSession({
           </div>
 
           <div className="space-y-4">
-            <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
-                Guia alinhada à grade
-              </p>
-              <div
-                className="grid gap-2 rounded-[1.25rem] border border-[color:var(--line)] bg-[color:var(--paper)] p-3"
-                style={{ gridTemplateColumns: `repeat(${challenge.gridSize}, 1fr)` }}
-              >
-                {challenge.target.flatMap((row, rowIndex) =>
-                  row.map((face, columnIndex) => (
-                    <CubeFacePreview
-                      key={`guide-${rowIndex}-${columnIndex}`}
-                      face={face}
-                      testId="cube-guide-cell"
-                      className="aspect-square"
-                    />
-                  )),
-                )}
-              </div>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
-                Referência original
-              </p>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] border border-[color:var(--line)] bg-white">
-                <Image
-                  src={challenge.imageSrc}
-                  alt={`${challenge.title} modelo`}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                  priority
-                />
-              </div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+              Guia alinhada à grade
+            </p>
+            <div
+              className="grid gap-2 rounded-[1.25rem] border border-[color:var(--line)] bg-[color:var(--paper)] p-3"
+              style={{ gridTemplateColumns: `repeat(${challenge.gridSize}, 1fr)` }}
+            >
+              {challenge.target.flatMap((row, rowIndex) =>
+                row.map((face, columnIndex) => (
+                  <CubeFacePreview
+                    key={`guide-${rowIndex}-${columnIndex}`}
+                    face={face}
+                    testId="cube-guide-cell"
+                    className="aspect-square"
+                  />
+                )),
+              )}
             </div>
           </div>
         </article>

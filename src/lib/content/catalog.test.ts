@@ -97,8 +97,8 @@ describe("content catalog", () => {
         ["red", "red"],
       ],
       [
-        ["white", "diag-tr"],
-        ["diag-bl", "white"],
+        ["white", "diag-bl"],
+        ["diag-tr", "white"],
       ],
       [
         ["diag-br", "red"],
@@ -133,6 +133,13 @@ describe("content catalog", () => {
         ["red", "white", "red"],
         ["diag-tr", "red", "diag-tl"],
       ],
+    ]);
+  });
+
+  it("keeps Cubos 2 aligned with its original diagonal pattern", () => {
+    expect(getCubeChallengeAt(1)?.target).toEqual([
+      ["white", "diag-bl"],
+      ["diag-tr", "white"],
     ]);
   });
 
