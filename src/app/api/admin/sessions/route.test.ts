@@ -74,6 +74,26 @@ describe("POST /api/admin/sessions", () => {
     });
   });
 
+  it("rejects puzzle sessions because Armar Objetos is disabled", async () => {
+    const { POST } = await import("./route");
+    const response = await POST(
+      new Request("http://localhost/api/admin/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          participantCode: "Rangel",
+          testType: "puzzle",
+        }),
+      }),
+    );
+
+    expect(createSession).not.toHaveBeenCalled();
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toEqual({
+      error: "Armar Objetos esta desativado no momento.",
+    });
+  });
+
   it("returns a helpful JSON error when Supabase rejects an unsupported test type", async () => {
     createSession.mockRejectedValue(
       new Error(
@@ -88,7 +108,7 @@ describe("POST /api/admin/sessions", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           participantCode: "Rangel",
-          testType: "puzzle",
+          testType: "adult-battery",
         }),
       }),
     );

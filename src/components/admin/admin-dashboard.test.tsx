@@ -252,7 +252,7 @@ describe("AdminDashboard", () => {
     ).toBeInTheDocument();
   });
 
-  it("submits adult battery, adolescent, and Armar Objetos test types with their internal ids", async () => {
+  it("submits only the enabled adult battery and adolescent test types with their internal ids", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce({
@@ -273,15 +273,6 @@ describe("AdminDashboard", () => {
         json: async () => ({
           snapshot: {
             session: { ...buildSessionRecord("Paciente Teen", "token-teen"), testType: "cubes-teen" },
-            items: [],
-          },
-        }),
-      })
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          snapshot: {
-            session: { ...buildSessionRecord("Paciente Puzzle", "token-puzzle"), testType: "puzzle" },
             items: [],
           },
         }),
@@ -334,28 +325,14 @@ describe("AdminDashboard", () => {
         }),
       }),
     );
+  });
 
-    fireEvent.change(screen.getByPlaceholderText("Ex.: Paciente 08-03 / R.B."), {
-      target: { value: "Paciente Puzzle" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: /Armar Objetos/i }));
-    fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
+  it("hides the Armar Objetos option from the session creation area", () => {
+    render(<AdminDashboard persistentStoreEnabled initialSessions={[]} />);
 
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledTimes(3);
-    });
-
-    expect(fetchMock).toHaveBeenNthCalledWith(
-      3,
-      "/api/admin/sessions",
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({
-          participantCode: "Paciente Puzzle",
-          testType: "puzzle",
-        }),
-      }),
-    );
+    expect(
+      screen.queryByRole("button", { name: /Armar Objetos/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("keeps the compact creation area labels visible", () => {

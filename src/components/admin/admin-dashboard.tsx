@@ -88,6 +88,29 @@ function getSessionBucket(session: SessionRecord): SessionTab {
   return session.status === "completed" ? "completed" : "open";
 }
 
+const creatableTestTypeOptions = [
+  {
+    id: "sequence" as const,
+    label: "Arranjo",
+    icon: <LayoutGrid className="h-3.5 w-3.5" />,
+  },
+  {
+    id: "cubes" as const,
+    label: "Cubos",
+    icon: <Boxes className="h-3.5 w-3.5" />,
+  },
+  {
+    id: "adult-battery" as const,
+    label: "Bateria Adulta",
+    icon: <Target className="h-3.5 w-3.5" />,
+  },
+  {
+    id: "cubes-teen" as const,
+    label: "Adolescente",
+    icon: <Boxes className="h-3.5 w-3.5" />,
+  },
+];
+
 function getCompletedItems(session: SessionRecord) {
   return session.status === "completed"
     ? session.totalItems
@@ -502,33 +525,7 @@ export function AdminDashboard({
                   Tipo de teste
                 </p>
                 <div className="grid grid-cols-2 gap-2">
-                  {[
-                    {
-                      id: "sequence" as const,
-                      label: "Arranjo",
-                      icon: <LayoutGrid className="h-3.5 w-3.5" />,
-                    },
-                    {
-                      id: "cubes" as const,
-                      label: "Cubos",
-                      icon: <Boxes className="h-3.5 w-3.5" />,
-                    },
-                    {
-                      id: "adult-battery" as const,
-                      label: "Bateria Adulta",
-                      icon: <Target className="h-3.5 w-3.5" />,
-                    },
-                    {
-                      id: "cubes-teen" as const,
-                      label: "Adolescente",
-                      icon: <Boxes className="h-3.5 w-3.5" />,
-                    },
-                    {
-                      id: "puzzle" as const,
-                      label: "Armar Objetos",
-                      icon: <Puzzle className="h-3.5 w-3.5" />,
-                    },
-                  ].map((option) => {
+                  {creatableTestTypeOptions.map((option) => {
                     const isActive = testType === option.id;
 
                     return (

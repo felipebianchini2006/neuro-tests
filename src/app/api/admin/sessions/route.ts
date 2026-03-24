@@ -4,6 +4,8 @@ import type { TestType } from "@/lib/content/catalog";
 import { isAdminAuthenticated } from "@/lib/server/admin-auth";
 import { getSessionRepository } from "@/lib/server/session-repository";
 
+const disabledTestTypes: TestType[] = ["puzzle"];
+
 function getCreateSessionErrorMessage(error: unknown) {
   if (
     error instanceof Error &&
@@ -28,6 +30,13 @@ export async function POST(request: Request) {
   if (!body.participantCode?.trim() || !body.testType) {
     return NextResponse.json(
       { error: "Preencha o identificador e o teste." },
+      { status: 400 },
+    );
+  }
+
+  if (disabledTestTypes.includes(body.testType)) {
+    return NextResponse.json(
+      { error: "Armar Objetos esta desativado no momento." },
       { status: 400 },
     );
   }
