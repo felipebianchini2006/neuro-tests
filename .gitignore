@@ -43,3 +43,9 @@ next-env.d.ts
 
 # git worktrees
 .worktrees/
+
+.superpowers
+.serena
+.playwright-mcp
+.planning
+.codex-cube-crops
