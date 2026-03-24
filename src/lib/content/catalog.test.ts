@@ -269,7 +269,7 @@ describe("cubes-teen catalog", () => {
     {
       imageSrc: "/assets/cubes-teen/8.jpg",
       gridSize: 2,
-      target: [["red", "red"], ["diag-tl", "diag-tr"]],
+      target: [["red", "diag-tl"], ["diag-br", "red"]],
     },
     {
       imageSrc: "/assets/cubes-teen/9.jpg",
@@ -351,8 +351,8 @@ describe("cubes-teen catalog", () => {
 
   it("keeps the corrected A6 composition", () => {
     expect(getCubeChallengeTeenAt(5)?.target).toEqual([
-      ["red", "red"],
-      ["diag-tl", "diag-tr"],
+      ["red", "diag-tl"],
+      ["diag-br", "red"],
     ]);
   });
 
