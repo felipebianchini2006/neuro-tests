@@ -36,6 +36,7 @@ export function CubesSession({
   onSubmit,
   onAdvance,
 }: CubesSessionProps) {
+  const isDiamondLayout = challenge.displayLayout === "diamond";
   const [pieces, setPieces] = useState(initialTray);
   const [board, setBoard] = useState<(string | null)[][]>(
     createEmptyBoard(challenge.gridSize),
@@ -113,20 +114,27 @@ export function CubesSession({
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
               Guia alinhada à grade
             </p>
-            <div
-              className="grid gap-2 rounded-[1.25rem] border border-[color:var(--line)] bg-[color:var(--paper)] p-3"
-              style={{ gridTemplateColumns: `repeat(${challenge.gridSize}, 1fr)` }}
-            >
-              {challenge.target.flatMap((row, rowIndex) =>
-                row.map((face, columnIndex) => (
-                  <CubeFacePreview
-                    key={`guide-${rowIndex}-${columnIndex}`}
-                    face={face}
-                    testId="cube-guide-cell"
-                    className="aspect-square"
-                  />
-                )),
-              )}
+            <div className={isDiamondLayout ? "px-8 py-8 sm:px-10 sm:py-10" : undefined}>
+              <div
+                data-testid="cube-guide-grid"
+                data-layout={isDiamondLayout ? "diamond" : "square"}
+                className={[
+                  "grid rounded-[1.25rem] border border-[color:var(--line)] bg-[color:var(--paper)] p-3",
+                  isDiamondLayout ? "mx-auto w-[72%] rotate-45 gap-1.5" : "gap-2",
+                ].join(" ")}
+                style={{ gridTemplateColumns: `repeat(${challenge.gridSize}, 1fr)` }}
+              >
+                {challenge.target.flatMap((row, rowIndex) =>
+                  row.map((face, columnIndex) => (
+                    <CubeFacePreview
+                      key={`guide-${rowIndex}-${columnIndex}`}
+                      face={face}
+                      testId="cube-guide-cell"
+                      className="aspect-square"
+                    />
+                  )),
+                )}
+              </div>
             </div>
           </div>
         </article>
@@ -150,10 +158,16 @@ export function CubesSession({
             </p>
           </div>
 
-          <div
-            className="grid gap-2 sm:gap-3"
-            style={{ gridTemplateColumns: `repeat(${challenge.gridSize}, 1fr)` }}
-          >
+          <div className={isDiamondLayout ? "px-8 py-8 sm:px-10 sm:py-10" : undefined}>
+            <div
+              data-testid="cube-response-grid"
+              data-layout={isDiamondLayout ? "diamond" : "square"}
+              className={[
+                "grid",
+                isDiamondLayout ? "mx-auto w-[72%] rotate-45 gap-1.5" : "gap-2 sm:gap-3",
+              ].join(" ")}
+              style={{ gridTemplateColumns: `repeat(${challenge.gridSize}, 1fr)` }}
+            >
             {board.flatMap((row, rowIndex) =>
               row.map((cell, columnIndex) => {
                 const piece = cell ? pieceMap.get(cell) ?? null : null;
@@ -197,7 +211,7 @@ export function CubesSession({
                     ].join(" ")}
                   >
                     <CubeFacePreview face={piece?.face ?? null} className="aspect-square" />
-                    {canPlaceSelected && !piece ? (
+                    {canPlaceSelected && !piece && !isDiamondLayout ? (
                       <span className="pointer-events-none absolute inset-x-2 bottom-2 rounded-full bg-white/82 px-2 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-[color:var(--accent)]">
                         Posicionar
                       </span>
@@ -206,6 +220,7 @@ export function CubesSession({
                 );
               }),
             )}
+            </div>
           </div>
         </article>
       </div>

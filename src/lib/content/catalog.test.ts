@@ -129,9 +129,9 @@ describe("content catalog", () => {
         ["diag-tr", "white", "diag-br"],
       ],
       [
-        ["diag-br", "red", "diag-bl"],
-        ["red", "white", "red"],
-        ["diag-tr", "red", "diag-tl"],
+        ["red", "diag-br", "diag-bl"],
+        ["diag-br", "white", "red"],
+        ["diag-tr", "red", "red"],
       ],
     ]);
   });

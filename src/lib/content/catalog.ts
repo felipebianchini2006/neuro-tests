@@ -32,6 +32,7 @@ export type CubeChallenge = {
   gridSize: 2 | 3;
   imageSrc: string;
   target: CubeFace[][];
+  displayLayout?: "square" | "diamond";
 };
 
 const sequenceStories = generatedSequenceSources.map((entry) =>
@@ -157,10 +158,11 @@ const cubeChallenges: CubeChallenge[] = [
     title: "Cubos 9",
     gridSize: 3,
     imageSrc: "/assets/cubes/9.jpg",
+    displayLayout: "diamond",
     target: [
-      ["diag-br", "red", "diag-bl"],
-      ["red", "white", "red"],
-      ["diag-tr", "red", "diag-tl"],
+      ["red", "diag-br", "diag-bl"],
+      ["diag-br", "white", "red"],
+      ["diag-tr", "red", "red"],
     ],
   },
 ];

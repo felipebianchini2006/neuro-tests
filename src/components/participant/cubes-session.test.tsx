@@ -40,6 +40,31 @@ const initialTray: CubePiece[] = [
   { id: "d", face: "red" },
 ];
 
+const diamondChallenge: CubeChallenge = {
+  id: "cubes-09",
+  title: "Cubos 9",
+  gridSize: 3,
+  imageSrc: "/assets/cubes/9.jpg",
+  displayLayout: "diamond",
+  target: [
+    ["red", "diag-br", "diag-bl"],
+    ["diag-br", "white", "red"],
+    ["diag-tr", "red", "red"],
+  ],
+};
+
+const diamondTray: CubePiece[] = [
+  { id: "p1", face: "red" },
+  { id: "p2", face: "diag-br" },
+  { id: "p3", face: "diag-bl" },
+  { id: "p4", face: "diag-br" },
+  { id: "p5", face: "white" },
+  { id: "p6", face: "red" },
+  { id: "p7", face: "diag-tr" },
+  { id: "p8", face: "red" },
+  { id: "p9", face: "red" },
+];
+
 describe("CubesSession", () => {
   it("renders an aligned guide grid for the expected cube layout", () => {
     render(
@@ -112,5 +137,23 @@ describe("CubesSession", () => {
 
     expect(screen.getByText("Peça selecionada")).toBeInTheDocument();
     expect(screen.getAllByText(/peça 1/i).length).toBeGreaterThanOrEqual(1);
+  });
+  it("renders Cubos 9 in diamond layout for both guide and response grids", () => {
+    render(
+      <CubesSession
+        challenge={diamondChallenge}
+        initialTray={diamondTray}
+        busy={false}
+        onSubmit={async () => {}}
+        onAdvance={async () => {}}
+      />,
+    );
+
+    expect(screen.getByTestId("cube-guide-grid")).toHaveAttribute("data-layout", "diamond");
+    expect(screen.getByTestId("cube-response-grid")).toHaveAttribute(
+      "data-layout",
+      "diamond",
+    );
+    expect(screen.getAllByTestId("cube-guide-cell")).toHaveLength(9);
   });
 });
