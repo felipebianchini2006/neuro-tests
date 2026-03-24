@@ -50,6 +50,9 @@ export function CubesSession({
   const selectedPiece = selectedPieceId ? pieceMap.get(selectedPieceId) ?? null : null;
   const placedPieceIds = new Set(board.flat().filter((cell): cell is string => cell !== null));
   const placedCount = placedPieceIds.size;
+  const missingCount = pieces.length - placedCount;
+  const isBoardComplete = missingCount === 0;
+  const missingPiecesLabel = `${missingCount} peça${missingCount === 1 ? "" : "s"}`;
 
   const boardFaces = board.map((row) =>
     row.map((cell) => (cell ? pieceMap.get(cell)?.face ?? null : null)),
@@ -280,6 +283,16 @@ export function CubesSession({
           )}
         </div>
 
+        {!isBoardComplete ? (
+          <p
+            aria-live="polite"
+            className="mb-4 rounded-[1.2rem] border border-[color:var(--warning,#c46b2d)]/25 bg-[color:var(--warning-soft,#fff4ea)] px-4 py-3 text-sm font-medium text-[color:var(--warning-ink,#9a4b15)]"
+          >
+            Faltam {missingPiecesLabel} na grade. As faces brancas também precisam ser
+            posicionadas.
+          </p>
+        ) : null}
+
         <div
           className="grid grid-cols-3 gap-1.5 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9"
           onDragOver={(event) => event.preventDefault()}
@@ -354,7 +367,7 @@ export function CubesSession({
           <button
             type="button"
             onClick={() => onSubmit(boardFaces)}
-            disabled={busy}
+            disabled={busy || !isBoardComplete}
             className="min-h-11 rounded-full bg-[color:var(--ink)] px-5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             Confirmar montagem

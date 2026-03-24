@@ -66,6 +66,25 @@ const diamondTray: CubePiece[] = [
 ];
 
 describe("CubesSession", () => {
+  it("requires all pieces to be positioned before confirming the assembly", () => {
+    render(
+      <CubesSession
+        challenge={challenge}
+        initialTray={initialTray}
+        busy={false}
+        onSubmit={async () => {}}
+        onAdvance={async () => {}}
+      />,
+    );
+
+    expect(
+      screen.getByText("Faltam 4 peças na grade. As faces brancas também precisam ser posicionadas."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /confirmar montagem/i }),
+    ).toBeDisabled();
+  });
+
   it("renders an aligned guide grid for the expected cube layout", () => {
     render(
       <CubesSession
