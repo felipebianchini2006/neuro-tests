@@ -27,7 +27,7 @@ const explicitStoryFrameFiles = {
   "8 - CHOIR": ["4.jpg", "3.jpg", "1.jpg", "5.jpg", "2.jpg"],
   "9 - LUNCH": ["2.jpg", "4.jpg", "1.jpg", "5.jpg", "3.jpg"],
   "10 - SHARK": ["3.jpg", "1.jpg", "5.jpg", "2.jpg", "4.jpg"],
-  "11 - SAMUEL": ["5.jpg", "4.jpg", "3.jpg", "1.jpg", "2.jpg", "6.jpg"],
+  "11 - SAMUEL": ["5.jpg", "4.jpg", "1.jpg", "6.jpg", "2.jpg", "3.jpg"],
 };
 
 function getFileLabel(fileName) {

@@ -122,10 +122,10 @@ export const generatedSequenceSources = [
     "frameSources": [
       "/assets/sequence/11%20-%20SAMUEL/5.jpg",
       "/assets/sequence/11%20-%20SAMUEL/4.jpg",
-      "/assets/sequence/11%20-%20SAMUEL/3.jpg",
       "/assets/sequence/11%20-%20SAMUEL/1.jpg",
+      "/assets/sequence/11%20-%20SAMUEL/6.jpg",
       "/assets/sequence/11%20-%20SAMUEL/2.jpg",
-      "/assets/sequence/11%20-%20SAMUEL/6.jpg"
+      "/assets/sequence/11%20-%20SAMUEL/3.jpg"
     ]
   }
 ] as const;
