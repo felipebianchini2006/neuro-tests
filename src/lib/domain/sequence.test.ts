@@ -76,6 +76,12 @@ describe("sequence domain", () => {
     expect(shuffled).not.toEqual(source);
   });
 
+  it("avoids returning the already-correct order for sortable sequences", () => {
+    const source = ["frame-a", "frame-b", "frame-c", "frame-d"];
+
+    expect(createSequenceSeedShuffle(source, "session-0")).not.toEqual(source);
+  });
+
   it("accepts only the exact correct answer order", () => {
     const story = buildSequenceStory("1 - CAP", [
       "/assets/sequence/1 - CAP/1.1 - CAP.jpg",

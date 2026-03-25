@@ -77,11 +77,21 @@ export function buildSequenceStory(
 }
 
 export function createSequenceSeedShuffle(frameIds: string[], seed: string) {
-  return [...frameIds].sort((left, right) => {
+  const shuffled = [...frameIds].sort((left, right) => {
     const leftWeight = stableHash(`${seed}:${left}`);
     const rightWeight = stableHash(`${seed}:${right}`);
     return leftWeight - rightWeight;
   });
+
+  if (
+    shuffled.length > 1 &&
+    shuffled.every((frameId, index) => frameId === frameIds[index])
+  ) {
+    const rotateBy = (stableHash(`${seed}:rotate`) % (shuffled.length - 1)) + 1;
+    return [...shuffled.slice(rotateBy), ...shuffled.slice(0, rotateBy)];
+  }
+
+  return shuffled;
 }
 
 export function isSequenceAnswerCorrect(
