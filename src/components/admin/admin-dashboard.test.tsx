@@ -233,17 +233,17 @@ describe("AdminDashboard", () => {
     expect(screen.queryByText("Unexpected end of JSON input")).not.toBeInTheDocument();
   });
 
-  it("shows the swapped adult and adolescent cube labels", () => {
+  it("shows the original cube labels", () => {
     render(<AdminDashboard persistentStoreEnabled initialSessions={[]} />);
 
+    expect(
+      screen.getByRole("button", { name: /^Cubos$/i }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /^Adolescente$/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /^Adulto$/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /C\\. Adolescente/i }),
+      screen.queryByRole("button", { name: /^Adulto$/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -255,22 +255,26 @@ describe("AdminDashboard", () => {
     ).toBeInTheDocument();
   });
 
-  it("submits the swapped adult and adolescent cube labels with their original internal ids", async () => {
+  it("shows the original cube labels in the selected session badge", () => {
+    render(
+      <AdminDashboard
+        persistentStoreEnabled
+        initialSessions={[
+          {
+            ...buildSessionRecord("Paciente Cubos", "token-cubes"),
+            testType: "cubes",
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getAllByText("Cubos").length).toBeGreaterThan(0);
+    expect(screen.queryByText("Cubos (Adulto)")).not.toBeInTheDocument();
+  });
+
+  it("submits the original adolescent cube label with its internal id", async () => {
     const fetchMock = vi
       .fn()
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          snapshot: {
-            session: {
-              ...buildSessionRecord("Paciente Adulto", "token-adult"),
-              testType: "adult-battery",
-              totalItems: 25,
-            },
-            items: [],
-          },
-        }),
-      })
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -286,9 +290,9 @@ describe("AdminDashboard", () => {
     render(<AdminDashboard persistentStoreEnabled initialSessions={[]} />);
 
     fireEvent.change(screen.getByPlaceholderText("Ex.: Paciente 08-03 / R.B."), {
-      target: { value: "Paciente Adulto" },
+      target: { value: "Paciente Teen" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Bateria Adulta/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^Adolescente$/i }));
     fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
 
     await waitFor(() => {
@@ -297,28 +301,6 @@ describe("AdminDashboard", () => {
 
     expect(fetchMock).toHaveBeenNthCalledWith(
       1,
-      "/api/admin/sessions",
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({
-          participantCode: "Paciente Adulto",
-          testType: "adult-battery",
-        }),
-      }),
-    );
-
-    fireEvent.change(screen.getByPlaceholderText("Ex.: Paciente 08-03 / R.B."), {
-      target: { value: "Paciente Teen" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: /^Adulto$/i }));
-    fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
-
-    await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledTimes(2);
-    });
-
-    expect(fetchMock).toHaveBeenNthCalledWith(
-      2,
       "/api/admin/sessions",
       expect.objectContaining({
         method: "POST",
