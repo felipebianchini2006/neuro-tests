@@ -63,9 +63,9 @@ function buildSessionUrl(origin: string, kind: "p" | "o", token: string) {
 function getTestTypeLabel(testType: TestType) {
   if (testType === "sequence") return "Arranjo de Figuras";
   if (testType === "adult-battery") return "Bateria Adulta";
-  if (testType === "cubes-teen") return "Cubos (Adolescente)";
+  if (testType === "cubes-teen") return "Cubos (Adulto)";
   if (testType === "puzzle") return "Armar Objetos";
-  return "Cubos";
+  return "Cubos (Adolescente)";
 }
 
 function getSessionStatusLabel(status: SessionStatus) {
@@ -96,7 +96,7 @@ const creatableTestTypeOptions = [
   },
   {
     id: "cubes" as const,
-    label: "Cubos",
+    label: "Adolescente",
     icon: <Boxes className="h-3.5 w-3.5" />,
   },
   {
@@ -106,7 +106,7 @@ const creatableTestTypeOptions = [
   },
   {
     id: "cubes-teen" as const,
-    label: "Adolescente",
+    label: "Adulto",
     icon: <Boxes className="h-3.5 w-3.5" />,
   },
 ];

@@ -44,10 +44,10 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
       : snapshot.session.testType === "adult-battery"
         ? "Bateria Adulta"
         : snapshot.session.testType === "cubes-teen"
-          ? "Cubos (Adolescente)"
+          ? "Cubos (Adulto)"
           : snapshot.session.testType === "puzzle"
             ? "Armar Objetos"
-            : "Cubos";
+            : "Cubos (Adolescente)";
 
   useEffect(() => {
     const channel = createSessionChannel(snapshot.session.token);

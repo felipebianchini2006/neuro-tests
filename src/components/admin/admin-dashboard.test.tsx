@@ -233,11 +233,14 @@ describe("AdminDashboard", () => {
     expect(screen.queryByText("Unexpected end of JSON input")).not.toBeInTheDocument();
   });
 
-  it("shows the adolescent test option with the updated label", () => {
+  it("shows the swapped adult and adolescent cube labels", () => {
     render(<AdminDashboard persistentStoreEnabled initialSessions={[]} />);
 
     expect(
       screen.getByRole("button", { name: /^Adolescente$/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^Adulto$/i }),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /C\\. Adolescente/i }),
@@ -252,7 +255,7 @@ describe("AdminDashboard", () => {
     ).toBeInTheDocument();
   });
 
-  it("submits only the enabled adult battery and adolescent test types with their internal ids", async () => {
+  it("submits the swapped adult and adolescent cube labels with their original internal ids", async () => {
     const fetchMock = vi
       .fn()
       .mockResolvedValueOnce({
@@ -307,7 +310,7 @@ describe("AdminDashboard", () => {
     fireEvent.change(screen.getByPlaceholderText("Ex.: Paciente 08-03 / R.B."), {
       target: { value: "Paciente Teen" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Adolescente/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^Adulto$/i }));
     fireEvent.click(screen.getByRole("button", { name: /Criar sess/i }));
 
     await waitFor(() => {
