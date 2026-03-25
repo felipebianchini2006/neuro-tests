@@ -147,6 +147,7 @@ const cubeChallenges: CubeChallenge[] = [
     title: "Cubos 8",
     gridSize: 3,
     imageSrc: "/assets/cubes/8.jpg",
+    displayLayout: "diamond",
     target: [
       ["diag-br", "red", "diag-bl"],
       ["red", "diag-tl", "white"],

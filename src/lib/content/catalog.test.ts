@@ -143,6 +143,10 @@ describe("content catalog", () => {
     ]);
   });
 
+  it("renders Cubos 8 using the diamond layout from the reference image", () => {
+    expect(getCubeChallengeAt(7)?.displayLayout).toBe("diamond");
+  });
+
   it("keeps the first CAP story limited to the three sortable frames", () => {
     expect(getSequenceStoryAt(0)?.frames.map((frame) => frame.label)).toEqual([
       "1.1 - CAP",
