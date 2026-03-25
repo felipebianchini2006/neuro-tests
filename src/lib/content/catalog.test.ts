@@ -302,15 +302,17 @@ describe("cubes-teen catalog", () => {
     {
       imageSrc: "/assets/cubes-teen/13.jpg",
       gridSize: 3,
+      displayLayout: "diamond",
       target: [
-        ["diag-br", "diag-bl", "diag-bl"],
-        ["diag-br", "red", "diag-tl"],
-        ["diag-tr", "diag-tr", "diag-tl"],
+        ["diag-br", "diag-bl", "white"],
+        ["diag-tr", "red", "white"],
+        ["white", "white", "red"],
       ],
     },
     {
       imageSrc: "/assets/cubes-teen/14.jpg",
       gridSize: 3,
+      displayLayout: undefined,
       target: [
         ["white", "diag-tl", "white"],
         ["diag-bl", "white", "diag-tr"],
@@ -332,9 +334,15 @@ describe("cubes-teen catalog", () => {
       teenChallenges.map((challenge) => ({
         imageSrc: challenge?.imageSrc,
         gridSize: challenge?.gridSize,
+        displayLayout: challenge?.displayLayout,
         target: challenge?.target,
       })),
-    ).toEqual(expectedTeenChallenges);
+    ).toEqual(
+      expectedTeenChallenges.map((challenge, index) => ({
+        ...challenge,
+        displayLayout: challenge.displayLayout,
+      })),
+    );
   });
 
   it("getCubeChallengeTeenAt returns null for out-of-range index", () => {
@@ -356,12 +364,22 @@ describe("cubes-teen catalog", () => {
     ]);
   });
 
-  it("keeps the corrected A11 pinwheel composition", () => {
+  it("keeps the corrected A11 diamond composition", () => {
     expect(getCubeChallengeTeenAt(10)?.target).toEqual([
-      ["diag-br", "diag-bl", "diag-bl"],
-      ["diag-br", "red", "diag-tl"],
-      ["diag-tr", "diag-tr", "diag-tl"],
+      ["diag-br", "diag-bl", "white"],
+      ["diag-tr", "red", "white"],
+      ["white", "white", "red"],
     ]);
+    expect(getCubeChallengeTeenAt(10)?.displayLayout).toBe("diamond");
+  });
+
+  it("keeps the corrected A12 pinwheel composition", () => {
+    expect(getCubeChallengeTeenAt(11)?.target).toEqual([
+      ["white", "diag-tl", "white"],
+      ["diag-bl", "white", "diag-tr"],
+      ["white", "diag-br", "white"],
+    ]);
+    expect(getCubeChallengeTeenAt(11)?.displayLayout).toBeUndefined();
   });
 
   it("validateCubeTeenAnswer returns false for wrong answer", () => {

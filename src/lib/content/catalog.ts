@@ -251,10 +251,11 @@ const cubeChallengesTeen: CubeChallenge[] = [
     title: "Cubos A11",
     gridSize: 3,
     imageSrc: "/assets/cubes-teen/13.jpg",
+    displayLayout: "diamond",
     target: [
-      ["diag-br", "diag-bl", "diag-bl"],
-      ["diag-br", "red", "diag-tl"],
-      ["diag-tr", "diag-tr", "diag-tl"],
+      ["diag-br", "diag-bl", "white"],
+      ["diag-tr", "red", "white"],
+      ["white", "white", "red"],
     ],
   },
   {
