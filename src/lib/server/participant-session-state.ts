@@ -111,26 +111,17 @@ export function buildParticipantSessionState(
       };
     }
 
-    if (item.section === "cubes") {
-      const challenge = getCubeChallengeAt(item.localIndex);
-
-      return {
-        snapshot,
-        currentItem: challenge
-          ? {
-              kind: "cubes",
-              challenge,
-              initialTray: getCubeTrayForSession(challenge, snapshot.session.token),
-            }
-          : null,
-      };
-    }
-
-    const challenge = getPuzzleChallengeAt(item.localIndex);
+    const challenge = getCubeChallengeAt(item.localIndex);
 
     return {
       snapshot,
-      currentItem: challenge ? { kind: "puzzle", challenge } : null,
+      currentItem: challenge
+        ? {
+            kind: "cubes",
+            challenge,
+            initialTray: getCubeTrayForSession(challenge, snapshot.session.token),
+          }
+        : null,
     };
   }
 

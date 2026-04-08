@@ -28,10 +28,10 @@ describe("content catalog", () => {
   });
 
   it("exposes the adult battery as the combined adult item count", () => {
-    expect(getTotalItems("adult-battery")).toBe(25);
+    expect(getTotalItems("adult-battery")).toBe(20);
   });
 
-  it("maps adult battery indexes across sequence, cubes, and puzzle sections", () => {
+  it("maps adult battery indexes across sequence and cubes sections", () => {
     expect(getAdultBatteryItemAt(0)).toEqual({
       section: "sequence",
       localIndex: 0,
@@ -48,21 +48,12 @@ describe("content catalog", () => {
       section: "cubes",
       localIndex: 8,
     });
-    expect(getAdultBatteryItemAt(20)).toEqual({
-      section: "puzzle",
-      localIndex: 0,
-    });
-    expect(getAdultBatteryItemAt(24)).toEqual({
-      section: "puzzle",
-      localIndex: 4,
-    });
-    expect(getAdultBatteryItemAt(25)).toBeNull();
+    expect(getAdultBatteryItemAt(20)).toBeNull();
   });
 
   it("returns section-aware titles for the adult battery", () => {
     expect(getItemTitle("adult-battery", 0)).toBe("1 - CAP");
     expect(getItemTitle("adult-battery", 11)).toBe("Cubos 1");
-    expect(getItemTitle("adult-battery", 20)).toBe("Homem");
   });
 
   it("uses the real cube image assets for every challenge", () => {

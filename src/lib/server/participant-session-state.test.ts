@@ -43,7 +43,7 @@ describe("participant session state", () => {
         testType: "adult-battery",
         status: "in_progress",
         currentItemIndex: 0,
-        totalItems: 25,
+        totalItems: 20,
         startedAt: null,
         completedAt: null,
         createdAt: "2026-03-09T12:00:00.000Z",
@@ -71,7 +71,7 @@ describe("participant session state", () => {
         testType: "adult-battery",
         status: "in_progress",
         currentItemIndex: 11,
-        totalItems: 25,
+        totalItems: 20,
         startedAt: null,
         completedAt: null,
         createdAt: "2026-03-09T12:00:00.000Z",
@@ -87,27 +87,4 @@ describe("participant session state", () => {
     expect(state.currentItem?.initialTray).toHaveLength(4);
   });
 
-  it("switches to puzzle after the cubes section in the adult battery", () => {
-    const snapshot: SessionSnapshot = {
-      session: {
-        id: "session-adult-3",
-        token: "adult-token-3",
-        participantCode: "Paciente",
-        testType: "adult-battery",
-        status: "in_progress",
-        currentItemIndex: 20,
-        totalItems: 25,
-        startedAt: null,
-        completedAt: null,
-        createdAt: "2026-03-09T12:00:00.000Z",
-        updatedAt: "2026-03-09T12:00:00.000Z",
-      },
-      items: [],
-    };
-
-    const state = buildParticipantSessionState(snapshot);
-
-    expect(state.currentItem?.kind).toBe("puzzle");
-    expect(state.currentItem?.challenge.title).toBe("Homem");
-  });
 });

@@ -13,7 +13,6 @@ import {
 import type { ParticipantSessionState } from "@/lib/server/participant-session-state";
 
 import { CubesSession } from "./cubes-session";
-import { PuzzleSession } from "./puzzle-session";
 import { SequenceSession } from "./sequence-session";
 
 type SessionPlayerProps = {
@@ -36,8 +35,6 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
   const currentItem = playerState.currentItem;
   const sequenceStory = currentItem?.kind === "sequence" ? currentItem.story : null;
   const cubeChallenge = currentItem?.kind === "cubes" ? currentItem.challenge : null;
-  const puzzleChallenge = currentItem?.kind === "puzzle" ? currentItem.challenge : null;
-
   const sessionTitle =
     snapshot.session.testType === "sequence"
       ? "Arranjo de Figuras"
@@ -231,16 +228,6 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
         />
       ) : null}
 
-      {currentItem?.kind === "puzzle" && puzzleChallenge ? (
-        <PuzzleSession
-          key={`${snapshot.session.token}:${puzzleChallenge.id}`}
-          challenge={puzzleChallenge}
-          currentRecord={currentRecord}
-          busy={busy}
-          onAnswer={submit}
-          onAdvance={advance}
-        />
-      ) : null}
     </main>
   );
 }

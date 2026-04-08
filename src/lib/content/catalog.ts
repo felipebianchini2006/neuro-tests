@@ -20,7 +20,7 @@ export type TestType =
   | "cubes-teen"
   | "puzzle"
   | "adult-battery";
-export type AdultBatterySection = "sequence" | "cubes" | "puzzle";
+export type AdultBatterySection = "sequence" | "cubes";
 export type AdultBatteryItem = {
   section: AdultBatterySection;
   localIndex: number;
@@ -275,7 +275,6 @@ const cubeChallengesTeen: CubeChallenge[] = [
 const adultBatteryOffsets = {
   sequenceStart: 0,
   cubesStart: sequenceStories.length,
-  puzzleStart: sequenceStories.length + cubeChallenges.length,
 } as const;
 
 export function getAdultBatteryItemAt(index: number): AdultBatteryItem | null {
@@ -285,16 +284,9 @@ export function getAdultBatteryItemAt(index: number): AdultBatteryItem | null {
       : null;
   }
 
-  if (index < adultBatteryOffsets.puzzleStart) {
-    const localIndex = index - adultBatteryOffsets.cubesStart;
-    return cubeChallenges[localIndex]
-      ? { section: "cubes", localIndex }
-      : null;
-  }
-
-  const localIndex = index - adultBatteryOffsets.puzzleStart;
-  return puzzleChallenges[localIndex]
-    ? { section: "puzzle", localIndex }
+  const localIndex = index - adultBatteryOffsets.cubesStart;
+  return cubeChallenges[localIndex]
+    ? { section: "cubes", localIndex }
     : null;
 }
 
@@ -314,7 +306,7 @@ export function validateCubeTeenAnswer(
 export function getTotalItems(testType: TestType) {
   if (testType === "sequence") return sequenceStories.length;
   if (testType === "adult-battery") {
-    return sequenceStories.length + cubeChallenges.length + puzzleChallenges.length;
+    return sequenceStories.length + cubeChallenges.length;
   }
   if (testType === "cubes-teen") return cubeChallengesTeen.length;
   if (testType === "puzzle") return puzzleChallenges.length;
@@ -378,11 +370,7 @@ export function getItemTitle(testType: TestType, itemIndex: number) {
       return getSequenceStoryAt(item.localIndex)?.title ?? `Historia ${item.localIndex + 1}`;
     }
 
-    if (item.section === "cubes") {
-      return getCubeChallengeAt(item.localIndex)?.title ?? `Cubos ${item.localIndex + 1}`;
-    }
-
-    return puzzleChallenges[item.localIndex]?.title ?? `Armar Objetos ${item.localIndex + 1}`;
+    return getCubeChallengeAt(item.localIndex)?.title ?? `Cubos ${item.localIndex + 1}`;
   }
 
   if (testType === "cubes-teen") {

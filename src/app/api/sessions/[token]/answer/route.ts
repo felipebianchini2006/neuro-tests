@@ -66,19 +66,10 @@ export async function POST(
                   );
                 }
 
-                if (item.section === "cubes") {
-                  return validateCubeAnswer(
-                    item.localIndex,
-                    Array.isArray(body.answerPayload)
-                      ? (body.answerPayload as (import("@/lib/domain/cubes").CubeFace | null)[][])
-                      : [],
-                  );
-                }
-
-                return validatePuzzleAnswer(
+                return validateCubeAnswer(
                   item.localIndex,
                   Array.isArray(body.answerPayload)
-                    ? (body.answerPayload as PiecePlacement[])
+                    ? (body.answerPayload as (import("@/lib/domain/cubes").CubeFace | null)[][])
                     : [],
                 );
               })()
