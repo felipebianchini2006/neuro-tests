@@ -22,6 +22,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import Image from "next/image";
 
+import { MAX_ATTEMPTS_PER_ITEM } from "@/lib/config/limits";
 import type { SequenceStory } from "@/lib/domain/sequence";
 import type { SessionItemRecord } from "@/lib/server/session-repository";
 
@@ -112,6 +113,9 @@ export function SequenceSession({
 }: SequenceSessionProps) {
   const [orderedIds, setOrderedIds] = useState(promptFrameIds);
   const dndContextId = `sequence-dnd-${story.id}`;
+  const attempts = currentRecord?.attempts ?? 0;
+  const maxAttemptsReached =
+    currentRecord?.isCorrect !== true && attempts >= MAX_ATTEMPTS_PER_ITEM;
 
   const frameMap = useMemo(
     () => new Map(story.frames.map((frame) => [frame.id, frame])),
@@ -188,14 +192,18 @@ export function SequenceSession({
           <p className="text-sm font-medium text-[color:var(--ink)]">
             {currentRecord?.isCorrect === true
               ? "Sequência correta."
-              : currentRecord?.isCorrect === false
-                ? "Sequência incorreta."
-                : "Ainda não confirmada."}
+              : maxAttemptsReached
+                ? `Limite de ${MAX_ATTEMPTS_PER_ITEM} tentativas atingido.`
+                : currentRecord?.isCorrect === false
+                  ? `Sequência incorreta. Tentativa ${attempts} de ${MAX_ATTEMPTS_PER_ITEM}.`
+                  : "Ainda não confirmada."}
           </p>
           <p className="text-sm text-[color:var(--ink-soft)]">
             {currentRecord?.isCorrect
               ? "Você pode avançar para a próxima história."
-              : "Arraste as imagens até formar a ordem final e clique em confirmar."}
+              : maxAttemptsReached
+                ? "Vamos pular para a próxima história."
+                : "Arraste as imagens até formar a ordem final e clique em confirmar."}
           </p>
         </div>
 
@@ -203,7 +211,7 @@ export function SequenceSession({
           <button
             type="button"
             onClick={() => onSubmit(orderedIds)}
-            disabled={busy}
+            disabled={busy || maxAttemptsReached}
             className="min-h-11 rounded-full bg-[color:var(--ink)] px-5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             Confirmar ordem
@@ -211,7 +219,7 @@ export function SequenceSession({
           <button
             type="button"
             onClick={onAdvance}
-            disabled={busy || currentRecord?.isCorrect !== true}
+            disabled={busy || (currentRecord?.isCorrect !== true && !maxAttemptsReached)}
             className="min-h-11 rounded-full border border-[color:var(--line-strong)] px-5 text-sm font-semibold text-[color:var(--ink)] transition hover:bg-[color:var(--surface-strong)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             Próxima história

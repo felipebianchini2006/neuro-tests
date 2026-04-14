@@ -2,7 +2,10 @@ import { randomBytes } from "node:crypto";
 
 import { createClient } from "@supabase/supabase-js";
 
+import { MAX_ATTEMPTS_PER_ITEM } from "@/lib/config/limits";
 import { getTotalItems, type TestType } from "@/lib/content/catalog";
+
+export { MAX_ATTEMPTS_PER_ITEM };
 
 export type SessionStatus = "pending" | "in_progress" | "completed";
 
@@ -320,8 +323,11 @@ const memoryRepository: SessionRepository = {
     }
 
     const current = itemMap.get(session.currentItemIndex);
+    const canAdvance =
+      current?.isCorrect === true ||
+      (current?.attempts ?? 0) >= MAX_ATTEMPTS_PER_ITEM;
 
-    if (!current?.isCorrect) {
+    if (!canAdvance) {
       return mapSnapshot(session, itemMap.values());
     }
 
@@ -607,8 +613,11 @@ const supabaseRepository: SessionRepository = {
     const current = snapshot.items.find(
       (item) => item.itemIndex === snapshot.session.currentItemIndex,
     );
+    const canAdvance =
+      current?.isCorrect === true ||
+      (current?.attempts ?? 0) >= MAX_ATTEMPTS_PER_ITEM;
 
-    if (!current?.isCorrect) {
+    if (!canAdvance) {
       return snapshot;
     }
 

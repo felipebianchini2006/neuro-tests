@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { RotateCw, Undo2 } from "lucide-react";
 
 import { CubeFacePreview } from "@/components/shared/cube-face";
+import { MAX_ATTEMPTS_PER_ITEM } from "@/lib/config/limits";
 import type { CubeChallenge } from "@/lib/content/catalog";
 import { rotateCubeFace, type CubePiece } from "@/lib/domain/cubes";
 import type { SessionItemRecord } from "@/lib/server/session-repository";
@@ -37,6 +38,9 @@ export function CubesSession({
   onAdvance,
 }: CubesSessionProps) {
   const isDiamondLayout = challenge.displayLayout === "diamond";
+  const attempts = currentRecord?.attempts ?? 0;
+  const maxAttemptsReached =
+    currentRecord?.isCorrect !== true && attempts >= MAX_ATTEMPTS_PER_ITEM;
   const [pieces, setPieces] = useState(initialTray);
   const [board, setBoard] = useState<(string | null)[][]>(
     createEmptyBoard(challenge.gridSize),
@@ -155,9 +159,11 @@ export function CubesSession({
             <p className="text-sm text-[color:var(--ink-soft)]">
               {currentRecord?.isCorrect === true
                 ? "Padrão correto."
-                : currentRecord?.isCorrect === false
-                  ? "Padrão incorreto."
-                  : "Ainda não confirmado."}
+                : maxAttemptsReached
+                  ? `Limite de ${MAX_ATTEMPTS_PER_ITEM} tentativas atingido.`
+                  : currentRecord?.isCorrect === false
+                    ? `Padrão incorreto. Tentativa ${attempts} de ${MAX_ATTEMPTS_PER_ITEM}.`
+                    : "Ainda não confirmado."}
             </p>
           </div>
 
@@ -363,11 +369,21 @@ export function CubesSession({
           })}
         </div>
 
+        {maxAttemptsReached ? (
+          <p
+            aria-live="polite"
+            className="mt-4 rounded-[1.2rem] border border-[color:var(--warning,#c46b2d)]/25 bg-[color:var(--warning-soft,#fff4ea)] px-4 py-3 text-sm font-medium text-[color:var(--warning-ink,#9a4b15)]"
+          >
+            Limite de {MAX_ATTEMPTS_PER_ITEM} tentativas atingido. Vamos pular para
+            o próximo desafio.
+          </p>
+        ) : null}
+
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={() => onSubmit(boardFaces)}
-            disabled={busy || !isBoardComplete}
+            disabled={busy || !isBoardComplete || maxAttemptsReached}
             className="min-h-11 rounded-full bg-[color:var(--ink)] px-5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           >
             Confirmar montagem
@@ -375,7 +391,7 @@ export function CubesSession({
           <button
             type="button"
             onClick={onAdvance}
-            disabled={busy || currentRecord?.isCorrect !== true}
+            disabled={busy || (currentRecord?.isCorrect !== true && !maxAttemptsReached)}
             className="min-h-11 rounded-full border border-[color:var(--line-strong)] px-5 text-sm font-semibold text-[color:var(--ink)] transition hover:bg-[color:var(--surface-strong)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             Próximo desafio

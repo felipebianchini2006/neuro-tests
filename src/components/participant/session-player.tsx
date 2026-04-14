@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, PartyPopper } from "lucide-react";
 
 import { getItemTitle } from "@/lib/content/catalog";
 import { postSessionAction } from "@/lib/client/api";
@@ -11,6 +11,7 @@ import {
   createSessionChannel,
 } from "@/lib/client/session-channel";
 import type { ParticipantSessionState } from "@/lib/server/participant-session-state";
+import { MAX_ATTEMPTS_PER_ITEM } from "@/lib/config/limits";
 
 import { CubesSession } from "./cubes-session";
 import { SequenceSession } from "./sequence-session";
@@ -94,6 +95,24 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
         createSessionChannel(snapshot.session.token),
         response.snapshot,
       );
+
+      const updatedRecord = response.snapshot.items.find(
+        (item) => item.itemIndex === currentIndex,
+      );
+      if (
+        updatedRecord &&
+        updatedRecord.isCorrect !== true &&
+        updatedRecord.attempts >= MAX_ATTEMPTS_PER_ITEM
+      ) {
+        const advanceResponse = await postSessionAction<ParticipantSessionState>(
+          `/api/sessions/${snapshot.session.token}/advance`,
+        );
+        setPlayerState(advanceResponse);
+        await broadcastSessionSnapshot(
+          createSessionChannel(snapshot.session.token),
+          advanceResponse.snapshot,
+        );
+      }
     } catch (submissionError) {
       setError(
         submissionError instanceof Error
@@ -132,16 +151,20 @@ export function SessionPlayer({ initialState }: SessionPlayerProps) {
   if (snapshot.session.status === "completed") {
     return (
       <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col justify-center gap-6 px-4 py-12 sm:px-6">
-        <section className="rounded-[2rem] border border-[color:var(--line)] bg-[color:var(--surface)] p-8 text-center shadow-[0_25px_50px_rgba(34,29,22,0.1)]">
+        <section className="rounded-[2rem] border border-[color:var(--line)] bg-[color:var(--surface)] p-10 text-center shadow-[0_25px_50px_rgba(34,29,22,0.1)]">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[color:var(--accent-soft,rgba(50,111,93,0.14))] text-[color:var(--accent,#326f5d)]">
+            <PartyPopper className="h-8 w-8" />
+          </div>
           <p className="text-sm uppercase tracking-[0.25em] text-[color:var(--muted)]">
-            Sessão concluída
+            Circuito concluído
           </p>
-          <h1 className="mt-3 text-3xl font-semibold text-[color:var(--ink)]">
-            Teste finalizado
+          <h1 className="mt-3 text-3xl font-semibold text-[color:var(--ink)] sm:text-4xl">
+            Parabéns! Você concluiu todos os testes.
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[color:var(--ink-soft)]">
-            Todas as tarefas deste link foram concluídas. O profissional já pode
-            acompanhar o resultado na tela de observação.
+          <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-[color:var(--ink-soft)]">
+            Todo o circuito foi finalizado com sucesso. Você pode encerrar esta
+            tela — o profissional já está acompanhando os resultados na tela de
+            observação.
           </p>
         </section>
       </main>
