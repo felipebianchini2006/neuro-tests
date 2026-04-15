@@ -82,6 +82,32 @@ describe("sequence domain", () => {
     expect(createSequenceSeedShuffle(source, "session-0")).not.toEqual(source);
   });
 
+  it("never leaves any frame at its correct position for any story or session token", async () => {
+    const { generatedSequenceSources } = await import(
+      "@/lib/content/sequence-manifest.generated"
+    );
+
+    const stories = generatedSequenceSources.map((entry) =>
+      buildSequenceStory(entry.title, [...entry.frameSources]),
+    );
+
+    for (const story of stories) {
+      for (let i = 0; i < 500; i += 1) {
+        const token = `seed-${story.id}-${i}-${(i * 2654435761) >>> 0}`;
+        const shuffled = createSequenceSeedShuffle(story.correctOrder, token);
+        const fixedPoints = shuffled.filter(
+          (frameId, index) => frameId === story.correctOrder[index],
+        ).length;
+
+        expect(
+          fixedPoints,
+          `story=${story.id} token=${token} -> ${shuffled.join(",")}`,
+        ).toBe(0);
+        expect([...shuffled].sort()).toEqual([...story.correctOrder].sort());
+      }
+    }
+  });
+
   it("accepts only the exact correct answer order", () => {
     const story = buildSequenceStory("1 - CAP", [
       "/assets/sequence/1 - CAP/1.1 - CAP.jpg",

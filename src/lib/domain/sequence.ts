@@ -76,19 +76,40 @@ export function buildSequenceStory(
   };
 }
 
-export function createSequenceSeedShuffle(frameIds: string[], seed: string) {
-  const shuffled = [...frameIds].sort((left, right) => {
-    const leftWeight = stableHash(`${seed}:${left}`);
-    const rightWeight = stableHash(`${seed}:${right}`);
-    return leftWeight - rightWeight;
-  });
+function mulberry32(seed: number) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
-  if (
-    shuffled.length > 1 &&
-    shuffled.every((frameId, index) => frameId === frameIds[index])
-  ) {
-    const rotateBy = (stableHash(`${seed}:rotate`) % (shuffled.length - 1)) + 1;
-    return [...shuffled.slice(rotateBy), ...shuffled.slice(0, rotateBy)];
+export function createSequenceSeedShuffle(frameIds: string[], seed: string) {
+  if (frameIds.length < 2) {
+    return [...frameIds];
+  }
+
+  const rng = mulberry32(stableHash(seed));
+  const shuffled = [...frameIds];
+
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rng() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  // Enforce a derangement: no position may coincide with the correct order.
+  // Sort-by-hash and even uniform Fisher-Yates produce the correct order (or
+  // near-correct orders with several fixed points) often enough to leak the
+  // answer to participants. A pass-through that swaps any matching position
+  // forward guarantees every slot differs from the input.
+  for (let i = 0; i < shuffled.length; i += 1) {
+    if (shuffled[i] === frameIds[i]) {
+      const swapWith = (i + 1) % shuffled.length;
+      [shuffled[i], shuffled[swapWith]] = [shuffled[swapWith], shuffled[i]];
+    }
   }
 
   return shuffled;
